@@ -1,0 +1,24 @@
+﻿<Window x:Class="Stock.Structure"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Structure" Height="413" Width="657" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" WindowStartupLocation="CenterScreen">
+    <Grid  MouseMove="Grid_MouseMove">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop x:Name="colora" Offset="0"/>
+                <GradientStop x:Name="colorb" Offset="0.25"/>
+                <GradientStop x:Name="colorc" Offset="0.5"/>
+                <GradientStop x:Name="colord" Offset="0.75"/>
+                <GradientStop x:Name="colore" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="title" Height="40"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="586,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
+        <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="619,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="持股构成" VerticalAlignment="Top" FontSize="18" Height="23" Width="76"/>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="354" Margin="10,10,0,-361" Grid.Row="1" Stroke="Black" VerticalAlignment="Top" Width="637"/>
+    </Grid>
+</Window>
