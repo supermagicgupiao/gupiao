@@ -16,7 +16,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -38,6 +38,10 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
@@ -64,8 +68,11 @@
     <Compile Include="Colors.xaml.cs">
       <DependentUpon>Colors.xaml</DependentUpon>
     </Compile>
-    <Compile Include="controller\DBController.cs" />
-    <Compile Include="controller\NETController.cs" />
+    <Compile Include="Controller\DBController\DBCheck.cs" />
+    <Compile Include="Controller\DBController\DBDataController.cs" />
+    <Compile Include="Controller\DBController\DBTablesController.cs" />
+    <Compile Include="Controller\NetController\NetDataController.cs" />
+    <Compile Include="Controller\NetController\NetState.cs" />
     <Compile Include="InfoShow.xaml.cs">
       <DependentUpon>InfoShow.xaml</DependentUpon>
     </Compile>
@@ -166,6 +173,7 @@
   <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

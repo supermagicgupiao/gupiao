@@ -15,7 +15,9 @@ using System.Windows.Shapes;
 
 using Microsoft.Win32;
 using System.Threading;
-using System.Text.RegularExpressions;
+
+using Stock.Controller.NetController;
+using Stock.Controller.DBController;
 
 namespace Stock
 {
@@ -27,6 +29,41 @@ namespace Stock
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Test()
+        {
+            DBCheck dbc = new DBCheck();
+            DB_ERROR dbe = dbc.Check();
+            if (dbe == DB_ERROR.DB_CANT_CONNECT)
+            {
+                MessageBox.Show("数据库无法连接");
+            }
+            else if(dbe == DB_ERROR.DB_TABLE_CRACK)
+            {
+                MessageBox.Show("数据库表损坏，无法重建");
+            }
+            else if(dbe == DB_ERROR.DB_TABLE_NOT_EXISTS)
+            {
+                MessageBox.Show("数据库表不存在");
+            }
+            else if(dbe == DB_ERROR.DB_TABLE_CRACK_FIX)
+            {
+                MessageBox.Show("数据库损坏，已重建");
+            }
+            NET_ERROR e = NetState.Check("0000001");
+            if (e == NET_ERROR.NET_CANT_CONNECT)
+            {
+                MessageBox.Show("网络无法连接");
+            }
+            else if (e == NET_ERROR.NET_JSON_NOT_EXISTS)
+            {
+                MessageBox.Show("数据不存在");
+            }
+            else if (e == NET_ERROR.NET_REQ_ERROR)
+            {
+                MessageBox.Show("请求错误");
+            }
         }
 
         private void MainGrid_MouseMove(object sender, MouseEventArgs e)
@@ -136,6 +173,7 @@ namespace Stock
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Test();
             InfoShowTimer = new Timer(ShowBoxCheck, null, 0, 2 * 1000);
             InfoShowTimer.Change(-1, 0);
             dlg = new InfoShow();
@@ -143,43 +181,49 @@ namespace Stock
             now.Text = "5000.00";
             total.IsEnabled = false;
             //now.IsEnabled = false;
-            StockStateBox box1 = new StockStateBox();
-            box1.Margin = new Thickness(5, 5, 0, 0);
-            box1.StockName.Text = "工商\r\n银行";
-            box1.UEvent += new EventHandler(uEvent);
-            StockCanvas.Children.Add(box1);
-            StockStateBox box2 = new StockStateBox();
-            box2.Margin = new Thickness(5, 10 + box1.Margin.Top + box1.Height, 0, 0);
-            box2.StockName.Text = "伊利\r\n股份";
-            box2.UEvent += new EventHandler(uEvent);
-            StockCanvas.Children.Add(box2);
-            StockStateBox box3 = new StockStateBox();
-            box3.Margin = new Thickness(5, 10 + box2.Margin.Top + box2.Height, 0, 0);
-            box3.StockName.Text = "工商\r\n银行";
-            box3.UEvent += new EventHandler(uEvent);
-            StockCanvas.Children.Add(box3);
-            StockStateBox box4 = new StockStateBox();
-            box4.Margin = new Thickness(5, 10 + box3.Margin.Top + box3.Height, 0, 0);
-            box4.StockName.Text = "北京\r\n银行";
-            box4.UEvent += new EventHandler(uEvent);
-            StockCanvas.Children.Add(box4);
-            StockStateBox box5 = new StockStateBox();
-            box5.Margin = new Thickness(5, 10 + box4.Margin.Top + box4.Height, 0, 0);
-            box5.StockName.Text = "以岭\r\n药业";
-            box5.UEvent += new EventHandler(uEvent);
-            StockCanvas.Children.Add(box5);
-            StockStateBox box6 = new StockStateBox();
-            box6.Margin = new Thickness(5, 10 + box5.Margin.Top + box5.Height, 0, 0);
-            box6.StockName.Text = "上海\r\n家化";
-            box6.UEvent += new EventHandler(uEvent);
-            StockCanvas.Children.Add(box6);
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            dict.Add("601398", "工商\r\n银行");
+            dict.Add("600887", "伊利\r\n股份");
+            dict.Add("601169", "北京\r\n银行");
+            dict.Add("002603", "以岭\r\n药业");
+            dict.Add("002241", "歌尔\r\n声学");
+            dict.Add("600196", "复星\r\n医药");
+            dict.Add("600315", "上海\r\n家化");
+            int i = 0;
+            foreach(var item in dict)
+            {
+                StockStateBox box = new StockStateBox();
+                box.Margin = new Thickness(5, 5 + (10 + box.Height) * i++, 0, 0);
+                box.StockName.Text = item.Value;
+                box.stockid = item.Key;
+                box.UEvent += new EventHandler(uEvent);
+                StockCanvas.Children.Add(box);
+                string stockid = item.Key;
+                string StockID = "";
+                if (NetState.Check("0" + stockid) == NET_ERROR.NET_REQ_OK)
+                {
+                    StockID = "0" + stockid;
+                }
+                else if (NetState.Check("1" + stockid) == NET_ERROR.NET_REQ_OK)
+                {
+                    StockID = "1" + stockid;
+                }
+                else
+                {
+                    MessageBox.Show("股票编号:" + stockid + "错误！");
+                    continue;
+                }
+                NetDataController.sync s = new NetDataController.sync(box.UpdataSync);
+                netdc.StockRefreshAdd(StockID, ref s);
+            }
+            netdc.StartRefresh();
         }
-
+        private NetDataController netdc = new NetDataController();
         private void uEvent(object sender, EventArgs e)
         {
             //do something(including send message to other user controls)
             StockInfo dlg = new StockInfo();
-            dlg.StockID = Regex.Replace(((StockStateBox)sender).StockName.Text, @"[\r\n]", "");
+            dlg.StockID = ((StockStateBox)sender).stockid;
             dlg.colora.Color = this.colora.Color;
             dlg.colorb.Color = this.colorb.Color;
             dlg.colorc.Color = this.colorc.Color;
@@ -291,6 +335,14 @@ namespace Stock
                 {
                     ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
                 }
+            }
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                MessageBox.Show(NetDataController.log);
             }
         }
     }

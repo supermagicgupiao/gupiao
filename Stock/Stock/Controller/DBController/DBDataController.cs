@@ -3,42 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.IO;
 using System.Data.SQLite;
 
-namespace Stock.controller
+namespace Stock.Controller.DBController
 {
-    class DBController
+    class DBDataController
     {
         private string dbPath;
         private SQLiteConnection conn;
-        DBController()
-        {
-            dbPath = Environment.CurrentDirectory + "/Stock.db";
-        }
-        DBController(string s)
+        public DBDataController(string s)
         {
             dbPath = s;
-        }
-        public bool DBExists()
-        {
-            if (Directory.Exists(dbPath))
-                return true;
-            return false;
-        }
-        public bool DBConnection()
-        {
             conn = new SQLiteConnection();
             SQLiteConnectionStringBuilder connstr = new SQLiteConnectionStringBuilder();
             connstr.DataSource = dbPath;
             //connstr.Password = "admin";
             conn.ConnectionString = connstr.ToString();
             conn.Open();
-            return true;
         }
-        public bool DBCreate()
+        public void DBDealList_Insert(string name,string id,string date,string type,string money,string number,string taxrate,string commission,string explain,string remark)
         {
-            return true;
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            string[] s = new string[] { name, id, date, type, money, number, taxrate, commission, explain, remark };
+            DBTablesController.Insert(DBTablesController.table[0],ref cmd,ref s);
         }
     }
 }

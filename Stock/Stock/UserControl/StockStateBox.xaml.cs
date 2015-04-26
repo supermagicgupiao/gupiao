@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Stock.Controller.NetController;
+
 namespace Stock
 {
     /// <summary>
@@ -23,7 +25,17 @@ namespace Stock
         {
             InitializeComponent();
         }
+        private void thsync(TextBox tb, string s)
+        {
+            tb.Text = s;
+        }
+        public void UpdataSync(string[] s)
+        {
+            Action<TextBox, String> updateAction = new Action<TextBox, string>(thsync);
+            price.Dispatcher.BeginInvoke(updateAction, price, s[5]);
+        }
         public event EventHandler UEvent;
+        public string stockid;
         private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (UEvent != null)

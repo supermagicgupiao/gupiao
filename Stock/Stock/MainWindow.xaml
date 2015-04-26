@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Stock.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="670" Width="300" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded">
+        Title="MainWindow" Height="670" Width="300" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
     <Grid x:Name="MainGrid" MouseMove="MainGrid_MouseMove" MouseDown="MainGrid_MouseDown">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

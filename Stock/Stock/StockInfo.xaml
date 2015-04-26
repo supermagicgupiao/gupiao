@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Stock.StockInfo"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="StockInfo" Height="592" Width="631" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded">
+        Title="StockInfo" Height="592" Width="631" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid MouseMove="Grid_MouseMove">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -15,15 +15,29 @@
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="40"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="561,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="593,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
         <TextBlock x:Name="StockTitle" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="股票信息" VerticalAlignment="Top" FontSize="18" Height="23" Width="231"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="175" Margin="10,4,0,0" Grid.Row="1" VerticalAlignment="Top" Width="611"/>
-        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="238" Margin="10,6,0,0" Grid.Row="2" Stroke="Black" VerticalAlignment="Top" Width="611"/>
-        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="103" Margin="10,10,0,-71" Grid.Row="3" Stroke="Black" VerticalAlignment="Top" Width="611"/>
-        <Image HorizontalAlignment="Left" Height="207" Margin="20,28,0,0" Grid.Row="2" VerticalAlignment="Top" Width="592"/>
+        <Grid HorizontalAlignment="Left" Height="538" Margin="10,4,0,0" Grid.Row="1" VerticalAlignment="Top" Width="611" Background="White">
+            <Label Content="¥" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" FontSize="26"/>
+            <TextBlock x:Name="price" HorizontalAlignment="Left" Margin="38,10,0,0" TextWrapping="WrapWithOverflow" Text=" " VerticalAlignment="Top" FontSize="26" Width="188"/>
+            <Label Content="今开：" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top"/>
+            <Label Content="昨收：" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top"/>
+            <Label Content="最高：" HorizontalAlignment="Left" Margin="180,48,0,0" VerticalAlignment="Top"/>
+            <Label Content="最低：" HorizontalAlignment="Left" Margin="180,78,0,0" VerticalAlignment="Top"/>
+            <TextBlock x:Name="time" HorizontalAlignment="Left" Margin="467,24,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top" Width="134"/>
+            <Label Content="成交量：" HorizontalAlignment="Left" Margin="350,48,0,0" VerticalAlignment="Top"/>
+            <Label Content="成交额：" HorizontalAlignment="Left" Margin="350,78,0,0" VerticalAlignment="Top"/>
+            <TextBlock x:Name="percent" HorizontalAlignment="Left" Margin="559,83,0,0" TextWrapping="Wrap" Text="     %" VerticalAlignment="Top" FontSize="9"/>
+            <TextBlock x:Name="arrow" HorizontalAlignment="Left" Margin="528,55,0,0" TextWrapping="Wrap" Text="↑" VerticalAlignment="Top" FontSize="34"/>
+            <TextBlock x:Name="updown" HorizontalAlignment="Left" Margin="559,67,0,0" TextWrapping="Wrap" Text="     " VerticalAlignment="Top" FontSize="9" RenderTransformOrigin="30.795,5.424"/>
+            <TextBlock x:Name="open" HorizontalAlignment="Left" Margin="60,53,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top"/>
+            <TextBlock x:Name="yestclose" HorizontalAlignment="Left" Margin="60,83,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top"/>
+            <TextBlock x:Name="high" HorizontalAlignment="Left" Margin="230,53,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top"/>
+            <TextBlock x:Name="low" HorizontalAlignment="Left" Margin="230,83,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top"/>
+            <TextBlock x:Name="volume" HorizontalAlignment="Left" Margin="420,53,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top"/>
+            <TextBlock x:Name="turnover" HorizontalAlignment="Left" Margin="420,83,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top"/>
+        </Grid>
     </Grid>
 </Window>
