@@ -68,13 +68,18 @@
     <Compile Include="Colors.xaml.cs">
       <DependentUpon>Colors.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controller\DBController\DBCheck.cs" />
     <Compile Include="Controller\DBController\DBDataController.cs" />
-    <Compile Include="Controller\DBController\DBTablesController.cs" />
+    <Compile Include="Controller\DBController\DBTable\DealLists.cs" />
+    <Compile Include="Controller\DBController\DBTable\Principal.cs" />
+    <Compile Include="Controller\DBController\DBTable\StockHold.cs" />
+    <Compile Include="Controller\ExcelController\ExcelOpen.cs" />
     <Compile Include="Controller\NetController\NetDataController.cs" />
     <Compile Include="Controller\NetController\NetState.cs" />
     <Compile Include="InfoShow.xaml.cs">
       <DependentUpon>InfoShow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InputMoney.xaml.cs">
+      <DependentUpon>InputMoney.xaml</DependentUpon>
     </Compile>
     <Compile Include="StockInfo.xaml.cs">
       <DependentUpon>StockInfo.xaml</DependentUpon>
@@ -97,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="InfoShow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InputMoney.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

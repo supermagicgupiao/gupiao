@@ -11,6 +11,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using Stock.Controller.DBController;
+using Stock.Controller.DBController.DBTable;
+
 namespace Stock
 {
     /// <summary>
@@ -22,7 +25,7 @@ namespace Stock
         {
             InitializeComponent();
         }
-
+        public List<DealListEntity> DLEL;
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -45,15 +48,51 @@ namespace Stock
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string[] listheader = new string[] { "股票名称", "股票编号", "日期", "类型", "价格", "数量", "税率", "佣金", "说明", "备注", "操作" };
+            string[] listheader = new string[] { "股票名称", "股票编号", "类型", "价格", "数量", "税率", "佣金", "日期", "说明", "备注" };
+            string[] binding = new string[] { "name", "id", "type", "money", "number", "taxrate", "commission", "date", "explain", "remark" };
+            int[] width = new int[] { 70, 70, 50, 80, 80, 45, 45, 80, 65, 65 };
             GridViewColumn[] h = new GridViewColumn[listheader.Length];
             for (int i = 0; i < listheader.Length; i++) 
             {
                 h[i] = new GridViewColumn();
                 h[i].Header = listheader[i];
-                h[i].Width = 60;
-                ListHeader.Columns.Add(h[i]);
+                BindingBase b = new Binding(binding[i]);
+                h[i].DisplayMemberBinding = b;
+                h[i].Width = width[i];
+                ListView.Columns.Add(h[i]);
             }
+            foreach (DealListEntity DLE in DLEL)
+            {
+                ItemData data = new ItemData(DLE.name, DLE.id, DLE.date, DLE.type, DLE.money, DLE.number, DLE.taxrate, DLE.commission, DLE.explain, DLE.remark);
+                DList.Items.Add(data);
+            }
+            DList.UpdateLayout();
         }
+    }
+    public class ItemData
+    {
+        public ItemData(string name, string id ,string date ,string type ,string money ,string number, string taxrate ,string commission ,string explain ,string remark)
+        {
+            this.name = name;
+            this.id = id;
+            this.date = date;
+            this.type = type;
+            this.money = money;
+            this.number = number;
+            this.taxrate = taxrate + "‰";
+            this.commission = commission + "‰";
+            this.explain = explain;
+            this.remark = remark;
+        }
+        public string name { get; set; }
+        public string id { get; set; }
+        public string date { get; set; }
+        public string type { get; set; }
+        public string money { get; set; }
+        public string number { get; set; }
+        public string taxrate { get; set; }
+        public string commission { get; set; }
+        public string explain { get; set; }
+        public string remark { get; set; }
     }
 }

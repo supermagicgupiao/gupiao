@@ -41,6 +41,11 @@ namespace Stock.Controller.NetController
             stockdict.Remove(stockid);
             return true;
         }
+        public bool StockRefreshClear()
+        {
+            stockdict.Clear();
+            return true;
+        }
         private void GetStockInfo(object stockdict)
         {
             Dictionary<string, sync> dict = (Dictionary<string, sync>)stockdict;

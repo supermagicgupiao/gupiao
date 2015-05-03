@@ -18,6 +18,8 @@ using System.Threading;
 
 using Stock.Controller.NetController;
 using Stock.Controller.DBController;
+using Stock.Controller.ExcelController;
+using Stock.Controller.DBController.DBTable;
 
 namespace Stock
 {
@@ -28,28 +30,36 @@ namespace Stock
     {
         public MainWindow()
         {
+            Test();
             InitializeComponent();
+            if (principal == 0)
+                this.Close();
         }
-
+        private DBDataController dbc;
+        private double principal;
         private void Test()
         {
-            DBCheck dbc = new DBCheck();
+            dbc = new DBDataController();
             DB_ERROR dbe = dbc.Check();
             if (dbe == DB_ERROR.DB_CANT_CONNECT)
             {
                 MessageBox.Show("数据库无法连接");
             }
-            else if(dbe == DB_ERROR.DB_TABLE_CRACK)
+            else if (dbe == DB_ERROR.DB_TABLE_CRACK)
             {
                 MessageBox.Show("数据库表损坏，无法重建");
             }
-            else if(dbe == DB_ERROR.DB_TABLE_NOT_EXISTS)
+            else if (dbe == DB_ERROR.DB_TABLE_NOT_EXISTS || dbe == DB_ERROR.DB_DATA_NOT_EXISTS || dbe == DB_ERROR.DB_TABLE_CRACK_FIX)
             {
-                MessageBox.Show("数据库表不存在");
+                MessageBox.Show("数据不存在");
+                InputMoney dlg = new InputMoney();
+                dlg.ShowDialog();
+                principal = dlg.m;
+                dbc.Principal_Insert(principal);
             }
-            else if(dbe == DB_ERROR.DB_TABLE_CRACK_FIX)
+            else if (dbe == DB_ERROR.DB_OK) 
             {
-                MessageBox.Show("数据库损坏，已重建");
+                principal = dbc.Principal_Select();
             }
             NET_ERROR e = NetState.Check("0000001");
             if (e == NET_ERROR.NET_CANT_CONNECT)
@@ -131,7 +141,9 @@ namespace Stock
             openFileDialog.DefaultExt = "xls";
             if (openFileDialog.ShowDialog() == true)
             {
-                MessageBox.Show(openFileDialog.FileName);
+                ExcelOpen eo = new ExcelOpen();
+                eo.open(openFileDialog.FileName, ref dbc);
+                StockBox();
             }
             else
             {
@@ -142,6 +154,7 @@ namespace Stock
         private void DealList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DealList dlg = new DealList();
+            dbc.DealList_Selects(out dlg.DLEL);
             dlg.colora.Color = this.colora.Color;
             dlg.colorb.Color = this.colorb.Color;
             dlg.colorc.Color = this.colorc.Color;
@@ -171,57 +184,64 @@ namespace Stock
             dlg.colore.Color = this.colore.Color;
             dlg.Show();
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Test();
             InfoShowTimer = new Timer(ShowBoxCheck, null, 0, 2 * 1000);
             InfoShowTimer.Change(-1, 0);
             dlg = new InfoShow();
-            total.Text = "100000.00";
-            now.Text = "5000.00";
+            now.Text = String.Format("{0:F}", principal);
             total.IsEnabled = false;
             //now.IsEnabled = false;
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            dict.Add("601398", "工商\r\n银行");
-            dict.Add("600887", "伊利\r\n股份");
-            dict.Add("601169", "北京\r\n银行");
-            dict.Add("002603", "以岭\r\n药业");
-            dict.Add("002241", "歌尔\r\n声学");
-            dict.Add("600196", "复星\r\n医药");
-            dict.Add("600315", "上海\r\n家化");
+            StockBox();
+        }
+        private void StockBox()
+        {
+            netdc.StockRefreshClear();
+            StockCanvas.Children.Clear();
+            List<StockHoldEntity> SHEL;
+            dbc.StockHold_Selects(out SHEL);
             int i = 0;
-            foreach(var item in dict)
+            double all = 0;
+            foreach (StockHoldEntity SHE in SHEL)
             {
                 StockStateBox box = new StockStateBox();
                 box.Margin = new Thickness(5, 5 + (10 + box.Height) * i++, 0, 0);
-                box.StockName.Text = item.Value;
-                box.stockid = item.Key;
+                box.stockid = SHE.id;
                 box.UEvent += new EventHandler(uEvent);
                 StockCanvas.Children.Add(box);
-                string stockid = item.Key;
+                string stockid = SHE.id;
                 string StockID = "";
-                if (NetState.Check("0" + stockid) == NET_ERROR.NET_REQ_OK)
+                string name = "";
+                if (NetState.CheckName("0" + stockid, ref name) == NET_ERROR.NET_REQ_OK)
                 {
                     StockID = "0" + stockid;
+                    box.StockName.Text = name.Insert(2, "\r\n");
                 }
-                else if (NetState.Check("1" + stockid) == NET_ERROR.NET_REQ_OK)
+                else if (NetState.CheckName("1" + stockid, ref name) == NET_ERROR.NET_REQ_OK)
                 {
                     StockID = "1" + stockid;
+                    box.StockName.Text = name.Insert(2, "\r\n");
                 }
                 else
                 {
                     MessageBox.Show("股票编号:" + stockid + "错误！");
+                    box.StockName.Text = dbc.StockName(SHE.id).Insert(2, "\r\n");
                     continue;
                 }
+                box.hold.Text = SHE.hold;
+                box.basemoney = Convert.ToDouble(SHE.money);
                 NetDataController.sync s = new NetDataController.sync(box.UpdataSync);
                 netdc.StockRefreshAdd(StockID, ref s);
+                all += Convert.ToDouble(SHE.money);
             }
+            all += Convert.ToDouble(now.Text);
+            total.Text = String.Format("{0:F}", all);
             netdc.StartRefresh();
         }
         private NetDataController netdc = new NetDataController();
         private void uEvent(object sender, EventArgs e)
         {
-            //do something(including send message to other user controls)
             StockInfo dlg = new StockInfo();
             dlg.StockID = ((StockStateBox)sender).stockid;
             dlg.colora.Color = this.colora.Color;
