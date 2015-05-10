@@ -21,10 +21,12 @@ namespace Stock
     /// </summary>
     public partial class StockStateBox : UserControl
     {
+        public static int count = -1;
         public double basemoney;
         public StockStateBox()
         {
             InitializeComponent();
+            count++;
         }
         private void pricesync(TextBox tb, string s)
         {
@@ -37,12 +39,12 @@ namespace Stock
         {
             updown.Text = s + "%";
         }
-        public void UpdataSync(string[] s)
+        public void UpdataSync(StockInfoEntity SIE)
         {
             Action<TextBox, String> updateAction0 = new Action<TextBox, string>(pricesync);
-            price.Dispatcher.BeginInvoke(updateAction0, price, s[5]);
+            price.Dispatcher.BeginInvoke(updateAction0, price, SIE.price);
             Action<TextBox, String> updateAction1 = new Action<TextBox, string>(updownsync);
-            updown.Dispatcher.BeginInvoke(updateAction1, updown, s[8]);
+            updown.Dispatcher.BeginInvoke(updateAction1, updown, SIE.updown);
         }
         public event EventHandler UEvent;
         public string stockid;

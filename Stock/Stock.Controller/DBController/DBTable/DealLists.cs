@@ -13,15 +13,23 @@ namespace Stock.Controller.DBController.DBTable
         public DealLists(SQLiteConnection conn)
         {
             this.conn = conn;
-            if (!Exists())
-                Create();
+            Create();
         }
+        //表不存在则创建
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table 'DealList'(name varchar(8),id varchar(7),date text,type int2,money real,number int,taxrate real,commission real,explain text,remark text)";
+            cmd.CommandText = "create table if not exists 'DealList'(name varchar(8),id varchar(7),date text,type int2,money real,number int,taxrate real,commission real,explain text,remark text)";
             cmd.ExecuteNonQuery();
         }
+        //删除表
+        public void Drop()
+        {
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "drop table 'DealList'";
+            cmd.ExecuteNonQuery();
+        }
+        //插入数据
         public void Insert(DealListEntity DLE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
@@ -38,36 +46,29 @@ namespace Stock.Controller.DBController.DBTable
             cmd.Parameters.Add(new SQLiteParameter("remark", DLE.remark));
             cmd.ExecuteNonQuery();
         }
-        public void Select(ref DealListEntity DLE)
+        //根据id获取其中全部交易记录
+        public void Select(string id, out List<DealListEntity> DLEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
             cmd.CommandText = "select * from 'DealList' where id=@id";
-            cmd.Parameters.Add(new SQLiteParameter("id", DLE.id));
+            cmd.Parameters.Add(new SQLiteParameter("id", id));
             SQLiteDataReader reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                if(reader.Read())
-                {
-                    DLE.name = reader.GetValue(0).ToString();
-                    DLE.id = reader.GetValue(1).ToString();
-                    DLE.date = reader.GetValue(2).ToString();
-                    DLE.type = reader.GetValue(3).ToString();
-                    DLE.money = reader.GetValue(4).ToString();
-                    DLE.number = reader.GetValue(5).ToString();
-                    DLE.taxrate = reader.GetValue(6).ToString();
-                    DLE.commission = reader.GetValue(7).ToString();
-                    DLE.explain = reader.GetValue(8).ToString();
-                    DLE.remark = reader.GetValue(9).ToString();
-                }
-            }
+            DLEL = Package(reader);
         }
-        public void Selects(out List<DealListEntity> DLEL)
+        //获取全部交易记录
+        public void Select(out List<DealListEntity> DLEL)
         {
-            DLEL = new List<DealListEntity>();
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            DealListEntity DLE;
             cmd.CommandText = "select * from 'DealList'";
             SQLiteDataReader reader = cmd.ExecuteReader();
+            DLEL = Package(reader);
+        }
+        //Reader数据封装成list
+        private List<DealListEntity> Package(SQLiteDataReader reader)
+        {
+            List<DealListEntity> DLEL;
+            DLEL = new List<DealListEntity>();
+            DealListEntity DLE;
             if (reader.HasRows)
             {
                 while (reader.Read())
@@ -85,18 +86,10 @@ namespace Stock.Controller.DBController.DBTable
                     DLEL.Add(DLE);
                 }
             }
-        }
-        private bool Exists()
-        {
-            SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select count(*) from sqlite_master where type='table' and name='DealList'";
-            if (0 == Convert.ToInt32(cmd.ExecuteScalar()))
-            {
-                return false;
-            }
-            return true;
+            return DLEL;
         }
     }
+    //DealList表结构体
     public struct DealListEntity
     {
         public string name;

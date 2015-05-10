@@ -35,7 +35,7 @@ namespace Stock
             if (principal == 0)
                 this.Close();
         }
-        private DBDataController dbc;
+        public static DBDataController dbc;
         private double principal;
         private void Test()
         {
@@ -49,17 +49,17 @@ namespace Stock
             {
                 MessageBox.Show("数据库表损坏，无法重建");
             }
-            else if (dbe == DB_ERROR.DB_TABLE_NOT_EXISTS || dbe == DB_ERROR.DB_DATA_NOT_EXISTS || dbe == DB_ERROR.DB_TABLE_CRACK_FIX)
+            else if (dbe == DB_ERROR.DB_DATA_NOT_EXISTS || dbe == DB_ERROR.DB_TABLE_CRACK_FIX)
             {
                 MessageBox.Show("数据不存在");
                 InputMoney dlg = new InputMoney();
                 dlg.ShowDialog();
                 principal = dlg.m;
-                dbc.Principal_Insert(principal);
+                dbc.PrincipalCreate(principal);
             }
             else if (dbe == DB_ERROR.DB_OK) 
             {
-                principal = dbc.Principal_Select();
+                principal = dbc.PrincipalRead();
             }
             NET_ERROR e = NetState.Check("0000001");
             if (e == NET_ERROR.NET_CANT_CONNECT)
@@ -75,7 +75,6 @@ namespace Stock
                 MessageBox.Show("请求错误");
             }
         }
-
         private void MainGrid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -96,7 +95,7 @@ namespace Stock
         {
             Application.Current.Shutdown();
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Search_Click(object sender, RoutedEventArgs e)
         {
             int id;
             if (int.TryParse(StockID.Text, out id) == false)
@@ -105,12 +104,8 @@ namespace Stock
                 return;
             }
             StockInfo dlg = new StockInfo();
+            dlg.Owner = this;
             dlg.StockID = StockID.Text;
-            dlg.colora.Color = this.colora.Color;
-            dlg.colorb.Color = this.colorb.Color;
-            dlg.colorc.Color = this.colorc.Color;
-            dlg.colord.Color = this.colord.Color;
-            dlg.colore.Color = this.colore.Color;
             dlg.Show();
         }
 
@@ -141,8 +136,10 @@ namespace Stock
             openFileDialog.DefaultExt = "xls";
             if (openFileDialog.ShowDialog() == true)
             {
-                ExcelOpen eo = new ExcelOpen();
-                eo.open(openFileDialog.FileName, ref dbc);
+                ExcelDataController edc = new ExcelDataController();
+                List<DealListEntity> DLEL;
+                edc.Open(openFileDialog.FileName, out DLEL);
+                dbc.DealListAdd(DLEL);
                 StockBox();
             }
             else
@@ -154,34 +151,19 @@ namespace Stock
         private void DealList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DealList dlg = new DealList();
-            dbc.DealList_Selects(out dlg.DLEL);
-            dlg.colora.Color = this.colora.Color;
-            dlg.colorb.Color = this.colorb.Color;
-            dlg.colorc.Color = this.colorc.Color;
-            dlg.colord.Color = this.colord.Color;
-            dlg.colore.Color = this.colore.Color;
+            dbc.DealListReadAll(out dlg.DLEL);
             dlg.Show();
         }
 
         private void Structure_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Structure dlg = new Structure();
-            dlg.colora.Color = this.colora.Color;
-            dlg.colorb.Color = this.colorb.Color;
-            dlg.colorc.Color = this.colorc.Color;
-            dlg.colord.Color = this.colord.Color;
-            dlg.colore.Color = this.colore.Color;
             dlg.Show();
         }
 
         private void Yield_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Yield dlg = new Yield();
-            dlg.colora.Color = this.colora.Color;
-            dlg.colorb.Color = this.colorb.Color;
-            dlg.colorc.Color = this.colorc.Color;
-            dlg.colord.Color = this.colord.Color;
-            dlg.colore.Color = this.colore.Color;
             dlg.Show();
         }
 
@@ -199,26 +181,26 @@ namespace Stock
         {
             netdc.StockRefreshClear();
             StockCanvas.Children.Clear();
+            StockStateBox.count = -1;
             List<StockHoldEntity> SHEL;
-            dbc.StockHold_Selects(out SHEL);
-            int i = 0;
+            dbc.StockHoldReadAll(out SHEL);
             double all = 0;
             foreach (StockHoldEntity SHE in SHEL)
             {
                 StockStateBox box = new StockStateBox();
-                box.Margin = new Thickness(5, 5 + (10 + box.Height) * i++, 0, 0);
+                box.Margin = new Thickness(5, 5 + (10 + box.Height) * StockStateBox.count, 0, 0);
                 box.stockid = SHE.id;
                 box.UEvent += new EventHandler(uEvent);
                 StockCanvas.Children.Add(box);
                 string stockid = SHE.id;
                 string StockID = "";
-                string name = "";
-                if (NetState.CheckName("0" + stockid, ref name) == NET_ERROR.NET_REQ_OK)
+                string name;
+                if (NetState.CheckName("0" + stockid, out name) == NET_ERROR.NET_REQ_OK)
                 {
                     StockID = "0" + stockid;
                     box.StockName.Text = name.Insert(2, "\r\n");
                 }
-                else if (NetState.CheckName("1" + stockid, ref name) == NET_ERROR.NET_REQ_OK)
+                else if (NetState.CheckName("1" + stockid, out name) == NET_ERROR.NET_REQ_OK)
                 {
                     StockID = "1" + stockid;
                     box.StockName.Text = name.Insert(2, "\r\n");
@@ -226,7 +208,7 @@ namespace Stock
                 else
                 {
                     MessageBox.Show("股票编号:" + stockid + "错误！");
-                    box.StockName.Text = dbc.StockName(SHE.id).Insert(2, "\r\n");
+                    box.StockName.Text = SHE.name.Insert(2, "\r\n");
                     continue;
                 }
                 box.hold.Text = SHE.hold;
@@ -239,16 +221,14 @@ namespace Stock
             total.Text = String.Format("{0:F}", all);
             netdc.StartRefresh();
         }
-        private NetDataController netdc = new NetDataController();
-        private void uEvent(object sender, EventArgs e)
+
+
+        public NetDataController netdc = new NetDataController();
+        public void uEvent(object sender, EventArgs e)
         {
             StockInfo dlg = new StockInfo();
+            dlg.Owner = this;
             dlg.StockID = ((StockStateBox)sender).stockid;
-            dlg.colora.Color = this.colora.Color;
-            dlg.colorb.Color = this.colorb.Color;
-            dlg.colorc.Color = this.colorc.Color;
-            dlg.colord.Color = this.colord.Color;
-            dlg.colore.Color = this.colore.Color;
             dlg.Show();
         }
 
@@ -325,12 +305,6 @@ namespace Stock
         private void Color_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Colors dlg = new Colors();
-            dlg.colora.Color = this.colora.Color;
-            dlg.colorb.Color = this.colorb.Color;
-            dlg.colorc.Color = this.colorc.Color;
-            dlg.colord.Color = this.colord.Color;
-            dlg.colore.Color = this.colore.Color;
-            dlg.Owner = this;
             dlg.Show();
         }
 

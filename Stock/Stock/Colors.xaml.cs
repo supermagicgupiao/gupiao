@@ -71,54 +71,97 @@ namespace Stock
         }
         private void ColorChanged()
         {
-            MainWindow mw = (MainWindow)this.Owner;
-            Brush br = new SolidColorBrush(Color.FromRgb(r, g, b));
-            if (Check_UIA.IsChecked == true)
+            Color c = Color.FromRgb(r, g, b);
+            if (Check_UIA.IsChecked == true || Check_UIB.IsChecked == true)
             {
-                mw.colora.Color = Color.FromRgb(r, g, b);
-                mw.colorc.Color = Color.FromRgb(r, g, b);
-                mw.colore.Color = Color.FromRgb(r, g, b);
+                LinearGradientBrush br = Application.Current.TryFindResource("MainColorBrush") as LinearGradientBrush;
+                LinearGradientBrush brush = br.Clone();
+                bool i = true;
+                foreach (GradientStop gs in brush.GradientStops)
+                {
+                    if (Check_UIA.IsChecked == true)
+                    {
+                        if (i)
+                            gs.Color = c;
+                    }
+                    else if (Check_UIB.IsChecked == true)
+                    {
+                        if (!i)
+                            gs.Color = c;
+                    }
+                    i = !i;
+                }
+                Application.Current.Resources.Remove("MainColorBrush");
+                Application.Current.Resources.Add("MainColorBrush", brush);
             }
-            else if (Check_UIB.IsChecked == true)
+            else
             {
-                mw.colorb.Color = Color.FromRgb(r, g, b);
-                mw.colord.Color = Color.FromRgb(r, g, b);
+                string box;
+                if (Check_STOCKLIST.IsChecked == true)
+                {
+                    box = "CanvasColor";
+                }
+                else if (Check_STOCKUI.IsChecked == true)
+                {
+                    box = "BoxColor";
+                }
+                else
+                {
+                    return;
+                }
+                SolidColorBrush br = Application.Current.TryFindResource(box) as SolidColorBrush;
+                SolidColorBrush brush = br.Clone();
+                brush.Color = c;
+                Application.Current.Resources.Remove(box);
+                Application.Current.Resources.Add(box, brush);
             }
-            else if (Check_STOCKLIST.IsChecked == true)
-                mw.StockCanvas.Background = br;
-            else if (Check_STOCKUI.IsChecked == true)
+        }
+        private void UIAandUIBSetColor(bool b)
+        {
+            LinearGradientBrush brush = Application.Current.TryFindResource("MainColorBrush") as LinearGradientBrush;
+            bool i = true;
+            foreach (GradientStop gs in brush.GradientStops)
             {
-                foreach (StockStateBox ui in mw.StockCanvas.Children)
-                    ui.Background = br;
+                if (b == i)
+                {
+                    ColorSet(gs.Color);
+                }
+                i = !i;
             }
         }
 
         private void Check_UIA_Checked(object sender, RoutedEventArgs e)
         {
-           MainWindow mw = (MainWindow)this.Owner;
-           ColorSet(mw.colora.Color);
+            UIAandUIBSetColor(true);
         }
 
         private void Check_UIB_Checked(object sender, RoutedEventArgs e)
         {
-            MainWindow mw = (MainWindow)this.Owner;
-            ColorSet(mw.colorb.Color);
+            UIAandUIBSetColor(false);
         }
 
+        private void STOCKLISTandSTOCKUISetColor(bool b)
+        {
+            string box;
+            if (b == true)
+            {
+                box = "CanvasColor";
+            }
+            else
+            {
+                box = "BoxColor";
+            }
+            SolidColorBrush brush = Application.Current.TryFindResource(box) as SolidColorBrush;
+            ColorSet(brush.Color);
+        }
         private void Check_STOCKLIST_Checked(object sender, RoutedEventArgs e)
         {
-            MainWindow mw = (MainWindow)this.Owner;
-            ColorSet(((SolidColorBrush)mw.StockCanvas.Background).Color);
+            STOCKLISTandSTOCKUISetColor(true);
         }
 
         private void Check_STOCKUI_Checked(object sender, RoutedEventArgs e)
         {
-            MainWindow mw = (MainWindow)this.Owner;
-            foreach (StockStateBox ui in mw.StockCanvas.Children)
-            {
-                ColorSet(((SolidColorBrush)ui.Background).Color);
-                break;
-            }
+            STOCKLISTandSTOCKUISetColor(false);
         }
 
     }

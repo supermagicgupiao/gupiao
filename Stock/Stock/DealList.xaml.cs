@@ -50,7 +50,7 @@ namespace Stock
         {
             string[] listheader = new string[] { "股票名称", "股票编号", "类型", "价格", "数量", "税率", "佣金", "日期", "说明", "备注" };
             string[] binding = new string[] { "name", "id", "type", "money", "number", "taxrate", "commission", "date", "explain", "remark" };
-            int[] width = new int[] { 70, 70, 50, 80, 80, 45, 45, 80, 65, 65 };
+            int[] width = new int[] { 70, 70, 50, 80, 80, 60, 60, 80, 50, 50 };
             GridViewColumn[] h = new GridViewColumn[listheader.Length];
             for (int i = 0; i < listheader.Length; i++) 
             {

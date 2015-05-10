@@ -38,15 +38,11 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\dll\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Stock.Controller">
+      <HintPath>..\Stock.Controller\bin\Debug\Stock.Controller.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\dll\System.Data.SQLite.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -65,16 +61,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddDealList.xaml.cs">
+      <DependentUpon>AddDealList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Colors.xaml.cs">
       <DependentUpon>Colors.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controller\DBController\DBDataController.cs" />
-    <Compile Include="Controller\DBController\DBTable\DealLists.cs" />
-    <Compile Include="Controller\DBController\DBTable\Principal.cs" />
-    <Compile Include="Controller\DBController\DBTable\StockHold.cs" />
-    <Compile Include="Controller\ExcelController\ExcelOpen.cs" />
-    <Compile Include="Controller\NetController\NetDataController.cs" />
-    <Compile Include="Controller\NetController\NetState.cs" />
     <Compile Include="InfoShow.xaml.cs">
       <DependentUpon>InfoShow.xaml</DependentUpon>
     </Compile>
@@ -93,6 +85,10 @@
     <Compile Include="Yield.xaml.cs">
       <DependentUpon>Yield.xaml</DependentUpon>
     </Compile>
+    <Page Include="AddDealList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -124,6 +120,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ResDict\Color.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StockInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

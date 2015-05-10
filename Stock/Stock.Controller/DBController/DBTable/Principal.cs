@@ -13,50 +13,50 @@ namespace Stock.Controller.DBController.DBTable
         public Principal(SQLiteConnection conn)
         {
             this.conn = conn;
+            Create();
         }
+        //表创建
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table 'Principal'(money real)";
+            cmd.CommandText = "create table if not exists 'Principal'(money real)";
             cmd.ExecuteNonQuery();
         }
-        public void Insert(double money)
+        //插入数据
+        public void Insert(PrincipalEntity PE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
             cmd.CommandText = "insert into 'Principal' values(@money)";
-            cmd.Parameters.Add(new SQLiteParameter("money", money));
+            cmd.Parameters.Add(new SQLiteParameter("money", PE.money));
             cmd.ExecuteNonQuery();
         }
-        public void Update(double money)
+        //更新数据
+        public void Update(PrincipalEntity PE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
             cmd.CommandText = "update 'Principal' set money=@money";
-            cmd.Parameters.Add(new SQLiteParameter("money", money));
+            cmd.Parameters.Add(new SQLiteParameter("money", PE.money));
             cmd.ExecuteNonQuery();
         }
-        public double Select()
+        //读取数据
+        public void Select(out PrincipalEntity PE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
             cmd.CommandText = "select * from 'Principal'";
             SQLiteDataReader reader = cmd.ExecuteReader();
+            PE = new PrincipalEntity();
             if (reader.HasRows)
             {
                 if (reader.Read())
                 {
-                    return Convert.ToDouble(reader.GetValue(0));
+                    PE.money = reader.GetValue(0).ToString();
                 }
             }
-            return 0;
         }
-        public bool Exists()
-        {
-            SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select count(*) from sqlite_master where type='table' and name='Principal'";
-            if (0 == Convert.ToInt32(cmd.ExecuteScalar()))
-            {
-                return false;
-            }
-            return true;
-        }
+    }
+    //Principal表结构体
+    public struct PrincipalEntity
+    {
+        public string money;
     }
 }
