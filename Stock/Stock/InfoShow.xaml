@@ -1,8 +1,8 @@
 ﻿<Window x:Class="Stock.InfoShow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="InfoShow" Height="140" Width="280" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded" >
-    <Grid Background="{DynamicResource MainColorBrush}">
+        Title="InfoShow" Height="140" Width="280" Background="{DynamicResource MainColorBrush}" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded" >
+    <Grid>
         <Label Content="市场:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label Content="日盈亏额:" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
         <Label Content="浮动盈亏:" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>

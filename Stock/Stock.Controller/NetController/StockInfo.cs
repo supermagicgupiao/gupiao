@@ -13,6 +13,7 @@ namespace Stock.Controller.NetController.StockAPI
         public abstract bool StockGet(ref List<string> id, out Dictionary<string, StockInfoEntity> dict);//抽象方法 股票不带参数返回获取
         public abstract NET_ERROR StockGetWithCheck(ref List<string> id, out Dictionary<string, StockInfoEntity> dict);// 带返回参数获取
         public abstract NET_ERROR KchartImageGet(string id, kchart k, out Image image);//返回股票k线图
+        public abstract NET_ERROR HistoryMoney(string id, DateTime date, DateTime enddate, out Dictionary<DateTime, double> money);//返回股票历史收盘价
         protected void UpdateLog(string stockid, NET_ERROR e)//更新日志
         {
             DateTime dt = DateTime.Now;

@@ -63,7 +63,7 @@ namespace Stock
             }
             foreach (DealListEntity DLE in DLEL)
             {
-                ItemData data = new ItemData(DLE.name, DLE.id, DLE.date, DLE.type, DLE.money, DLE.number, DLE.taxrate, DLE.commission, DLE.explain, DLE.remark);
+                ItemData data = new ItemData(DLE.name, DLE.id, DLE.date.ToString("yyyy/MM/dd"), DLE.type, DLE.money.ToString(), DLE.number.ToString(), DLE.taxrate.ToString(), DLE.commission.ToString(), DLE.explain, DLE.remark);
                 DList.Items.Add(data);
             }
             DList.UpdateLayout();

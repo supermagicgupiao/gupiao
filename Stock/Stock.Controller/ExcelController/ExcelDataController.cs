@@ -53,6 +53,8 @@ namespace Stock.Controller.ExcelController
             {
                 return OPENEXCEL_ERROR.OLE_ERROR;//XLSX没安装Microsoft.Ace.OleDb.12.0则会报错,XLS没安装Microsoft.Jet.OLEDB.4.0会报错
             }
+            List<DealListEntity> DLELNoSort = new List<DealListEntity>();
+            bool FORMAT = true;
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 DealListEntity DLE = new DealListEntity();
@@ -62,40 +64,46 @@ namespace Stock.Controller.ExcelController
                     string s;
                     int k;
                     count++;//数据必须存在以下需要的十列，其他多余的列不作处理
+                    Type t = ds.Tables[0].Rows[i][column[j]].GetType();
                     switch(column[j])
                     {
                         case "价格":
-                            DLE.money = ds.Tables[0].Rows[i][column[j]].ToString();
+                            if (t == DLE.money.GetType())
+                                DLE.money = Convert.ToDouble(ds.Tables[0].Rows[i][column[j]]);
+                            else
+                                count--;
                             break;
                         case "佣金":
                             s = ds.Tables[0].Rows[i][column[j]].ToString();
                             k = s.IndexOf('‰');
                             if (k > 0)
-                                DLE.commission = s.Substring(0, k);
+                                DLE.commission = Convert.ToDouble(s.Substring(0, k));
                             else
-                                DLE.commission = s;
+                                count--;
                             break;
                         case "备注":
                             DLE.remark = ds.Tables[0].Rows[i][column[j]].ToString();
                             break;
                         case "数量":
-                            DLE.number = ds.Tables[0].Rows[i][column[j]].ToString();
+                            int num;
+                            if (Int32.TryParse(ds.Tables[0].Rows[i][column[j]].ToString(), out num) == true)
+                                DLE.number = num;
+                            else
+                                count--;
                             break;
                         case "日期":
-                            s = ds.Tables[0].Rows[i][column[j]].ToString();
-                            k = s.IndexOf(' ');
-                            if (k > 0)
-                                DLE.date = s.Substring(0, k);
+                            if (t == DLE.date.GetType())
+                                DLE.date = Convert.ToDateTime(ds.Tables[0].Rows[i][column[j]]);
                             else
-                                DLE.date = s;
+                                count--;
                             break;
                         case "税率":
                             s = ds.Tables[0].Rows[i][column[j]].ToString();
                             k = s.IndexOf('‰');
                             if (k > 0)
-                                DLE.taxrate = s.Substring(0, k);
+                                DLE.taxrate = Convert.ToDouble(s.Substring(0, k));
                             else
-                                DLE.taxrate = s;
+                                count--;
                             break;
                         case "类型":
                             DLE.type = ds.Tables[0].Rows[i][column[j]].ToString();
@@ -104,7 +112,11 @@ namespace Stock.Controller.ExcelController
                             DLE.name = ds.Tables[0].Rows[i][column[j]].ToString();
                             break;
                         case "股票编号":
-                            DLE.id = ds.Tables[0].Rows[i][column[j]].ToString().PadLeft(6,'0');
+                            int stock;
+                            if (Int32.TryParse(ds.Tables[0].Rows[i][column[j]].ToString(), out stock) == true)
+                                DLE.id = stock.ToString().PadLeft(6, '0');
+                            else
+                                count--;
                             break;
                         case "说明":
                             DLE.explain = ds.Tables[0].Rows[i][column[j]].ToString();
@@ -117,11 +129,19 @@ namespace Stock.Controller.ExcelController
                 if (count == 10)
                 {
                     if (DLE.name != "" && DLE.id != "" && DLE.id.Length == 6)//股票名称和长度不对的行不保存
-                        DLEL.Add(DLE);
+                        DLELNoSort.Add(DLE);
                 }
                 else
-                    return OPENEXCEL_ERROR.FORMAT_ERROR;//缺少相应的列
+                    FORMAT = false;
             }
+            List<DealListEntity> DLELNoSortByDate = new List<DealListEntity>();
+            DLELNoSortByDate.AddRange(DLELNoSort.Where(s => s.type == "买入").ToList());
+            DLELNoSortByDate.AddRange(DLELNoSort.Where(s => s.type == "卖空").ToList());
+            DLELNoSortByDate.AddRange(DLELNoSort.Where(s => s.type == "卖出").ToList());
+            DLELNoSortByDate.AddRange(DLELNoSort.Where(s => s.type == "补仓").ToList());
+            DLEL = DLELNoSortByDate.OrderBy(s => s.date).ToList();//排序
+            if (FORMAT == false)
+                return OPENEXCEL_ERROR.FORMAT_ERROR;//缺少相应的列
             return OPENEXCEL_ERROR.OPEN_OK;
         }
         private string OleStrCon(string FileType,string FilePath, bool HasTitle)//ole连接构造

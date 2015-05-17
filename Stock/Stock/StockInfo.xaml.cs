@@ -68,13 +68,7 @@ namespace Stock
         {
             if(bimage!=null)
             {
-                System.IO.MemoryStream ms = new System.IO.MemoryStream();
-                bimage.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                System.Windows.Media.Imaging.BitmapImage bi = new System.Windows.Media.Imaging.BitmapImage();
-                bi.BeginInit();
-                bi.StreamSource = new System.IO.MemoryStream(ms.ToArray());
-                bi.EndInit();
-                image.Source = bi; 
+                image.Source = Adapter.ImageAdapter.ImageConvert(bimage); 
             }
         }
         private void UpdataImage(System.Drawing.Image image)
@@ -165,7 +159,7 @@ namespace Stock
             ADL.Owner = this.Owner;
             ADL.name.Text = StockName;
             ADL.id.Text = StockID;
-            ADL.date.Text = DateTime.Now.ToString("yyyy/MM/dd");
+            ADL.date.Text = DateTime.Now.ToString();
             ADL.money.Text = price.Text;
             ADL.taxrate.Text = "1‰";
             ADL.commission.Text = "0.3‰";

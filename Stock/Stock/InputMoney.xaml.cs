@@ -31,7 +31,7 @@ namespace Stock
         public double m;
         private void ButtonOK_Click(object sender, RoutedEventArgs e)
         {
-            if (Double.TryParse(money.Text, out m))
+            if (Double.TryParse(money.Text, out m) && m!=0)
                 this.Close();
             else
                 MessageBox.Show("错误的本金金额！");

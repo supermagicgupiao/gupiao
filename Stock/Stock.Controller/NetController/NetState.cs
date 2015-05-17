@@ -94,5 +94,18 @@ namespace Stock.Controller.NetController
                 }
             return NE;
         }
+        //获取当前价
+        public static double PriceGet(string id)
+        {
+            StockInfo si = new Netease();
+            List<string> idl=new List<string>();
+            idl.Add(id);
+            Dictionary<string,StockInfoEntity> dict;
+            si.StockGet(ref idl, out dict);
+            if (dict.Count == 0)
+                return 0;
+            else
+                return Convert.ToDouble(dict[id].price);
+        }
     }
 }

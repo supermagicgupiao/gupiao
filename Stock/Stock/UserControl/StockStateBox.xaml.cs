@@ -21,12 +21,12 @@ namespace Stock
     /// </summary>
     public partial class StockStateBox : UserControl
     {
-        public static int count = -1;
+        public static StockStateBox pre;
         public double basemoney;
         public StockStateBox()
         {
             InitializeComponent();
-            count++;
+            pre = this;
         }
         private void pricesync(TextBox tb, string s)
         {

@@ -22,6 +22,7 @@ namespace Stock.Controller.DBController
         private DealLists deallist;
         private StockHold stockhold;
         private Principal principal;
+        private HistoryStockHold historystockhold;
         private Log log;
 
 
@@ -122,9 +123,24 @@ namespace Stock.Controller.DBController
         //读取日志
         public void LogRead(out List<LogEntity> LEL)
         {
-            log.Selects(out LEL);
+            log.Select(out LEL);
+        }
+        //股票编号和日期范围内指定股票编号的历史收盘价
+        public void HistoryStockHoldReadByRange(string id, DateTime date, int days, out List<HistoryStockHoldEntity> HSHEL)
+        {
+            historystockhold.Select(id, date, days, out HSHEL);
+        }
+        //日期范围内指定股票编号的历史收盘价
+        public void HistoryStockHoldReadByRange(DateTime date, int days, out List<HistoryStockHoldEntity> HSHEL)
+        {
+            historystockhold.Select(date, days, out HSHEL);
         }
 
+        //关闭数据库连接
+        public void Close()
+        {
+            file_conn.Close();
+        }
 
         //数据库连接
         private bool DBConnection()
@@ -160,6 +176,7 @@ namespace Stock.Controller.DBController
 
                 //内存数据库：持股表
                 stockhold = new StockHold(mem_conn);
+                historystockhold = new HistoryStockHold(mem_conn);
 
                 //交易记录创建持股表
                 StockHold_Init();
@@ -194,21 +211,27 @@ namespace Stock.Controller.DBController
             if (DLE.type == "买入")
                 SHE.hold = DLE.number;
             else if (DLE.type == "卖出")
-                SHE.hold = "-" + DLE.number;
-            else if (DLE.type == "补仓")
-                SHE.hold = DLE.number;
+                SHE.hold = -DLE.number;
             else if (DLE.type == "卖空")
-                SHE.hold = "-" + DLE.number;
+                SHE.hold = DLE.number;
+            else if (DLE.type == "补仓")
+                SHE.hold = -DLE.number;
             else
                 SHE.hold = DLE.number;
-            SHE.money = (Convert.ToDouble(DLE.money) * Convert.ToDouble(SHE.hold)).ToString();
+            SHE.money = Convert.ToDouble(DLE.money) * Convert.ToDouble(SHE.hold);
             StockHoldEntity SHE_=new StockHoldEntity();
             SHE_.id = SHE.id;
             stockhold.Select(ref SHE_);
-            if (SHE_.money != null && SHE_.hold != null)
+            HistoryStockHoldEntity HSHE = new HistoryStockHoldEntity();
+            HSHE.id = SHE.id;
+            HSHE.number = SHE_.hold;
+            HSHE.date = DLE.date;
+            HSHE.change = SHE.hold;
+            historystockhold.Insert(HSHE);
+            if (SHE_.name != null)
             {
-                SHE.hold = (Convert.ToInt32(SHE.hold) + Convert.ToInt32(SHE_.hold)).ToString();
-                SHE.money = (Convert.ToDouble(SHE.money) + Convert.ToDouble(SHE_.money)).ToString();
+                SHE.hold = SHE.hold + SHE_.hold;
+                SHE.money = Convert.ToDouble(SHE.money) + Convert.ToDouble(SHE_.money);
                 stockhold.Update(SHE);
             }
             else

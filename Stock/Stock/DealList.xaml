@@ -1,8 +1,8 @@
 ﻿<Window x:Class="Stock.DealList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DealList" Height="413" Width="703" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
-    <Grid  MouseMove="Grid_MouseMove" Background="{DynamicResource MainColorBrush}">
+        Title="DealList" Height="413" Width="703" Background="{DynamicResource MainColorBrush}" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+    <Grid MouseMove="Grid_MouseMove" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="40"/>
             <RowDefinition Height="Auto"/>

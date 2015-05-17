@@ -75,6 +75,29 @@ namespace Stock.Controller.NetController
             si.KchartImageGet(IE.id, IE.k, out image);
             IE.bimage(image);
         }
+        //获取历史股票收盘价
+        public static void HistoryMoney(string id, DateTime date, int days, out Dictionary<DateTime, double> money)
+        {
+            StockInfo si = new Netease();
+            si.HistoryMoney(id, date, date.AddDays(days), out money);
+        }
+        //获取历史股票收盘价
+        public static void HistoryMoney(string id, DateTime date, DateTime enddate, out Dictionary<DateTime, double> money)
+        {
+            StockInfo si = new Netease();
+            si.HistoryMoney(id, date, enddate, out money);
+        }
+        //获取某天股票收盘价
+        public static double HistoryMoney(string id, DateTime date)
+        {
+            StockInfo si = new Netease();
+            Dictionary<DateTime, double> money;
+            si.HistoryMoney(id, date, date, out money);
+            if (money.Count > 0)
+                return money.First().Value;
+            else
+                return 0;
+        }
         //批量获取
         private void GetStockInfo(object stockdict)
         {

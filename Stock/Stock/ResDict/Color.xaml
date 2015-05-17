@@ -12,4 +12,5 @@
     <SolidColorBrush x:Key="BoxColor" Color="AliceBlue" x:Shared="false"/>
     <SolidColorBrush x:Key="CanvasColor" Color="White" x:Shared="false"/>
     
+    
 </ResourceDictionary>

@@ -64,8 +64,8 @@ namespace Stock.Controller.DBController.DBTable
                 if (reader.Read())
                 {
                     SHE.name = reader.GetValue(0).ToString();
-                    SHE.hold = reader.GetValue(1).ToString();
-                    SHE.money = reader.GetValue(2).ToString();
+                    SHE.hold = Convert.ToInt32(reader.GetValue(1).ToString());
+                    SHE.money = Convert.ToDouble(reader.GetValue(2));
                 }
             }
         }
@@ -83,8 +83,8 @@ namespace Stock.Controller.DBController.DBTable
                 {
                     SHE.id = reader.GetValue(0).ToString();
                     SHE.name = reader.GetValue(1).ToString();
-                    SHE.hold = reader.GetValue(2).ToString();
-                    SHE.money = reader.GetValue(3).ToString();
+                    SHE.hold = Convert.ToInt32(reader.GetValue(2));
+                    SHE.money = Convert.ToDouble(reader.GetValue(3));
                     SHEL.Add(SHE);
                 }
             }
@@ -95,7 +95,7 @@ namespace Stock.Controller.DBController.DBTable
     {
         public string id;
         public string name;
-        public string hold;
-        public string money;
+        public Int32 hold;
+        public Double money;
     }
 }

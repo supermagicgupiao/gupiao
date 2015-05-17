@@ -19,7 +19,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table if not exists 'DealList'(name varchar(8),id varchar(7),date text,type int2,money real,number int,taxrate real,commission real,explain text,remark text)";
+            cmd.CommandText = "create table if not exists 'DealList'(name varchar(8),id varchar(7),date datetime,type int2,money real,number int,taxrate real,commission real,explain text,remark text)";
             cmd.ExecuteNonQuery();
         }
         //删除表
@@ -75,12 +75,12 @@ namespace Stock.Controller.DBController.DBTable
                 {
                     DLE.name = reader.GetValue(0).ToString();
                     DLE.id = reader.GetValue(1).ToString();
-                    DLE.date = reader.GetValue(2).ToString();
+                    DLE.date = Convert.ToDateTime(reader.GetValue(2));
                     DLE.type = reader.GetValue(3).ToString();
-                    DLE.money = reader.GetValue(4).ToString();
-                    DLE.number = reader.GetValue(5).ToString();
-                    DLE.taxrate = reader.GetValue(6).ToString();
-                    DLE.commission = reader.GetValue(7).ToString();
+                    DLE.money = Convert.ToDouble(reader.GetValue(4));
+                    DLE.number = Convert.ToInt32(reader.GetValue(5));
+                    DLE.taxrate =  Convert.ToDouble(reader.GetValue(6));
+                    DLE.commission =  Convert.ToDouble(reader.GetValue(7));
                     DLE.explain = reader.GetValue(8).ToString();
                     DLE.remark = reader.GetValue(9).ToString();
                     DLEL.Add(DLE);
@@ -92,15 +92,15 @@ namespace Stock.Controller.DBController.DBTable
     //DealList表结构体
     public struct DealListEntity
     {
-        public string name;
-        public string id;
-        public string date;
-        public string type;
-        public string money;
-        public string number;
-        public string taxrate;
-        public string commission;
-        public string explain;
-        public string remark;
+        public String name;
+        public String id;
+        public DateTime date;
+        public String type;
+        public Double money;
+        public Int32 number;
+        public Double taxrate;
+        public Double commission;
+        public String explain;
+        public String remark;
     }
 }

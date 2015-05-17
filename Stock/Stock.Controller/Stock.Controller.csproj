@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -51,9 +52,11 @@
   <ItemGroup>
     <Compile Include="DBController\DBDataController.cs" />
     <Compile Include="DBController\DBTable\DealLists.cs" />
+    <Compile Include="DBController\DBTable\HistoryStockHold.cs" />
     <Compile Include="DBController\DBTable\Log.cs" />
     <Compile Include="DBController\DBTable\Principal.cs" />
     <Compile Include="DBController\DBTable\StockHold.cs" />
+    <Compile Include="DrawController\DrawDataController.cs" />
     <Compile Include="ExcelController\ExcelDataController.cs" />
     <Compile Include="NetController\NetDataController.cs" />
     <Compile Include="NetController\NetState.cs" />

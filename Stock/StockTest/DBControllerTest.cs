@@ -58,8 +58,8 @@ namespace StockTest
         //数据库DealList读写测试
         public void DBDataControllerDealListTest()
         {
-            File.Delete(Environment.CurrentDirectory + "\\Stock.db");//先移除默认数据库
-            DBDataController DBC = new DBDataController();
+            File.Delete(Environment.CurrentDirectory + "\\Stock1.db");
+            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock1.db");
             DB_ERROR DBE = DBC.Check();
             DealListEntity DLE = new DealListEntity();
             DLE.id = "600001";
@@ -75,8 +75,8 @@ namespace StockTest
         //数据库Principal读写测试
         public void DBDataControllerPrincipalTest()
         {
-            File.Delete(Environment.CurrentDirectory + "\\Stock.db");//先移除默认数据库
-            DBDataController DBC = new DBDataController();
+            File.Delete(Environment.CurrentDirectory + "\\Stock2.db");
+            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock2.db");
             DB_ERROR DBE = DBC.Check();
             DBC.PrincipalCreate(100000000000000.00);
             Assert.AreEqual(100000000000000.00, DBC.PrincipalRead());
@@ -85,14 +85,14 @@ namespace StockTest
                 double m = 12.34 * i;
                 DBC.PrincipalWrite(m);
                 Assert.AreEqual(m.ToString(), DBC.PrincipalRead().ToString());
-            }   
+            }
         }
         [TestMethod]
         //数据库Log读写测试
         public void DBDataControllerLogTest()
         {
-            File.Delete(Environment.CurrentDirectory + "\\Stock.db");//先移除默认数据库
-            DBDataController DBC = new DBDataController();
+            File.Delete(Environment.CurrentDirectory + "\\Stock3.db");
+            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock3.db");
             DB_ERROR DBE = DBC.Check();
             LogEntity LE = new LogEntity();
             LE.state = "状态";
@@ -108,20 +108,20 @@ namespace StockTest
         //数据库StockHold读测试
         public void DBDataControllerStockHoldTest()
         {
-            File.Delete(Environment.CurrentDirectory + "\\Stock.db");//先移除默认数据库
-            DBDataController DBC = new DBDataController();
+            File.Delete(Environment.CurrentDirectory + "\\Stock4.db");
+            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock4.db");
             DB_ERROR DBE = DBC.Check();
             DealListEntity DLE = new DealListEntity();
             DLE.id = "600001";
             DLE.name = "邯郸钢铁";
-            DLE.money = "10.11";
-            DLE.number = "400";
+            DLE.money = 10.11;
+            DLE.number = 400;
             DLE.type = "买入";
             DBC.DealListAdd(DLE);//存入一条数据
             DLE.id = "600001";
             DLE.name = "邯郸钢铁";
-            DLE.money = "5.11";
-            DLE.number = "200";
+            DLE.money = 5.11;
+            DLE.number = 200;
             DLE.type = "卖出";
             DBC.DealListAdd(DLE);//再存入一条数据
             List<StockHoldEntity> SHEL;
@@ -129,8 +129,8 @@ namespace StockTest
             Assert.AreEqual(1, SHEL.Count);
             Assert.AreEqual(DLE.id, SHEL[0].id);//判断读取与存入的数据是否一致
             Assert.AreEqual(DLE.name, SHEL[0].name);
-            Assert.AreEqual("200", SHEL[0].hold);//运算结果
-            Assert.AreEqual("3022", SHEL[0].money);//运算结果
+            Assert.AreEqual(200, SHEL[0].hold);//运算结果
+            Assert.AreEqual(3022, SHEL[0].money);//运算结果
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Stock.Controller.DBController.DBTable
             cmd.ExecuteNonQuery();
         }
         //读取全部数据
-        public void Selects(out List<LogEntity> LEL)
+        public void Select(out List<LogEntity> LEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
             cmd.CommandText = "select * from 'Log'";

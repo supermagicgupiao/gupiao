@@ -132,7 +132,44 @@ namespace Stock.Controller.NetController.StockAPI
             }
             return NET_ERROR.NET_REQ_OK;
         }
-        private string KchartSwitch(kchart k)
+        public override NET_ERROR HistoryMoney(string id, DateTime date, DateTime enddate, out Dictionary<DateTime, double> money)
+        {
+            money = new Dictionary<DateTime, double>();
+            HttpWebRequest req;
+            string hurl = HistoryMoneyUrl(id, date, enddate);
+            if (hurl == "")
+                return NET_ERROR.NET_REQ_ERROR;
+            Stream stm;
+            try
+            {
+                req = HttpWebRequest.Create(hurl) as HttpWebRequest;//构建获取地址
+                stm = req.GetResponse().GetResponseStream();
+            }
+            catch (WebException)
+            {
+                UpdateLog(id, NET_ERROR.NET_CANT_CONNECT);
+                return NET_ERROR.NET_CANT_CONNECT;//网络错误 无法连接
+            }
+            try
+            {
+                StreamReader reader = new StreamReader(stm);
+                String line;
+                reader.ReadLine();
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] s = line.Split(',');
+                    string[] d = s[0].Split('-');
+                    DateTime dt = new DateTime(Convert.ToInt32(d[0]), Convert.ToInt32(d[1]), Convert.ToInt32(d[2]));
+                    money.Add(dt, Convert.ToDouble(s[3]));
+                }
+            }
+            catch
+            {
+                return NET_ERROR.NET_DATA_ERROR;
+            }
+            return NET_ERROR.NET_REQ_OK;
+        }
+        private string KchartSwitch(kchart k)//k线图请求url选择
         {
             switch(k)
             {
@@ -151,6 +188,10 @@ namespace Stock.Controller.NetController.StockAPI
                 default:
                     return "";
             }
+        }
+        private string HistoryMoneyUrl(string id, DateTime date, DateTime enddate)//k线图请求url选择
+        {
+            return "http://quotes.money.163.com/service/chddata.html?code=" + id + "&start=" + date.ToString("yyyyMMdd") + "&end=" + enddate.ToString("yyyyMMdd") + "&fields=TCLOSE";
         }
         public override bool StockGet(ref List<string> id, out Dictionary<string, StockInfoEntity> dict)
         {

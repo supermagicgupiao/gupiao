@@ -31,10 +31,7 @@ namespace Stock
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (e.GetPosition((IInputElement)sender).Y < title.Height.Value)
-                {
-                    this.DragMove();
-                }
+                this.DragMove();
             }
         }
 
@@ -53,8 +50,13 @@ namespace Stock
             try
             {
                 Convert.ToDouble(money.Text);
-                if(number.Text=="0"||Convert.ToInt32(number.Text)%100!=0)
+                if (number.Text == "0")
                     throw new Exception();
+                if (type.Text == "买入" || type.Text == "卖空")
+                {
+                    if (Convert.ToInt32(number.Text) % 100 != 0)
+                        throw new Exception();
+                }
                 if(taxrate.Text[taxrate.Text.Length-1]!='‰')
                     throw new Exception();
                 if(commission.Text[commission.Text.Length-1]!='‰')
@@ -68,12 +70,12 @@ namespace Stock
             DealListEntity DLE;
             DLE.name = name.Text;
             DLE.id = id.Text;
-            DLE.date = date.Text;
+            DLE.date = Convert.ToDateTime(date.Text);
             DLE.type = type.Text;
-            DLE.money = money.Text;
-            DLE.number = number.Text;
-            DLE.taxrate = taxrate.Text;
-            DLE.commission = commission.Text;
+            DLE.money = Convert.ToDouble(money.Text);
+            DLE.number = Convert.ToInt32(number.Text);
+            DLE.taxrate = Convert.ToDouble(taxrate.Text.Substring(0,taxrate.Text.IndexOf("‰")));
+            DLE.commission = Convert.ToDouble(commission.Text.Substring(0,commission.Text.IndexOf("‰")));
             DLE.explain = explain.Text;
             DLE.remark = remark.Text;
             MainWindow.dbc.DealListAdd(DLE);
@@ -82,10 +84,22 @@ namespace Stock
             foreach(StockStateBox b in uc)
             {
                 if (b.stockid == id.Text)
+                {
+                    if (type.Text == "买入" || type.Text == "卖空")
+                        b.hold.Text = (Convert.ToInt32(b.hold.Text) + DLE.number).ToString();
+                    else
+                        b.hold.Text = (Convert.ToInt32(b.hold.Text) - DLE.number).ToString();
                     this.Close();
+                    return;
+                }
             }
+            double height;
+            if (StockStateBox.pre != null)
+                height = StockStateBox.pre.Margin.Top + StockStateBox.pre.ActualHeight;
+            else
+                height = -5;
             StockStateBox box = new StockStateBox();
-            box.Margin = new Thickness(5, 5 + (10 + box.Height) * StockStateBox.count, 0, 0);
+            box.Margin = new Thickness(5, height + 10, 0, 0);
             box.stockid = id.Text;
             box.UEvent += new EventHandler(((MainWindow)Owner).uEvent);
             uc.Add(box);

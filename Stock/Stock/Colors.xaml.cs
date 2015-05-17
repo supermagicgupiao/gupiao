@@ -42,7 +42,12 @@ namespace Stock
             }
         }
 
-        private byte r, g, b;
+        private byte a, r, g, b;
+        private void A_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            a = Convert.ToByte(A_Color.Value * 255 / 10);
+            ColorChanged();
+        }
         private void R_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             r = Convert.ToByte(R_Color.Value * 255 / 10);
@@ -62,16 +67,18 @@ namespace Stock
         }
         private void ColorSet(Color color)
         {
+            a = color.A;
             r = color.R;
             g = color.G;
             b = color.B;
+            A_Color.Value = Convert.ToDouble(a * 10) / 255;
             R_Color.Value = Convert.ToDouble(r * 10) / 255;
             G_Color.Value = Convert.ToDouble(g * 10) / 255;
             B_Color.Value = Convert.ToDouble(b * 10) / 255;
         }
         private void ColorChanged()
         {
-            Color c = Color.FromRgb(r, g, b);
+            Color c = Color.FromArgb(a, r, g, b);
             if (Check_UIA.IsChecked == true || Check_UIB.IsChecked == true)
             {
                 LinearGradientBrush br = Application.Current.TryFindResource("MainColorBrush") as LinearGradientBrush;

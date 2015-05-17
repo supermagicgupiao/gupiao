@@ -1,8 +1,8 @@
 ﻿<Window x:Class="Stock.Yield"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Yield" Height="413" Width="657" Opacity="1" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" WindowStartupLocation="CenterScreen">
-    <Grid  MouseMove="Grid_MouseMove" Background="{DynamicResource MainColorBrush}">
+        Title="Yield" Height="452" Width="657" Background="{DynamicResource MainColorBrush}" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid MouseMove="Grid_MouseMove" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="40"/>
             <RowDefinition Height="Auto"/>
@@ -10,6 +10,13 @@
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="586,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="619,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="收益率" VerticalAlignment="Top" FontSize="18" Height="23" Width="57"/>
-        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="354" Margin="10,10,0,-361" Grid.Row="1" Stroke="Black" VerticalAlignment="Top" Width="637"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="352" Margin="10,10,0,-359" Grid.Row="1" VerticalAlignment="Top" Width="637">
+            <Image x:Name="yield" Width="637" Height="352"/>
+        </Border>
+        <DatePicker x:Name="StartDate" HorizontalAlignment="Left" Margin="110,375,0,-261" Grid.Row="1" VerticalAlignment="Top"/>
+        <TextBox x:Name="DateLong" HorizontalAlignment="Left" Height="24" Margin="320,375,0,-251" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
+        <Label Content="开始时间:" HorizontalAlignment="Left" Margin="30,373,0,-280" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="持续时间:" HorizontalAlignment="Left" Margin="240,373,0,-300" Grid.Row="1" VerticalAlignment="Top"/>
+        <Button Content="查看" HorizontalAlignment="Left" Margin="572,379,0,-228" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
     </Grid>
 </Window>

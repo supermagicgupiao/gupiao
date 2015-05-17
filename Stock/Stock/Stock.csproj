@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Adapter\ImageAdapter.cs" />
     <Compile Include="AddDealList.xaml.cs">
       <DependentUpon>AddDealList.xaml</DependentUpon>
     </Compile>

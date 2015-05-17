@@ -17,6 +17,7 @@ using Microsoft.Win32;
 using System.Threading;
 
 using Stock.Controller.NetController;
+using Stock.Controller.DrawController;
 using Stock.Controller.DBController;
 using Stock.Controller.ExcelController;
 using Stock.Controller.DBController.DBTable;
@@ -55,6 +56,8 @@ namespace Stock
                 InputMoney dlg = new InputMoney();
                 dlg.ShowDialog();
                 principal = dlg.m;
+                if (principal == 0)
+                    return;
                 dbc.PrincipalCreate(principal);
             }
             else if (dbe == DB_ERROR.DB_OK) 
@@ -179,16 +182,21 @@ namespace Stock
         }
         private void StockBox()
         {
+            StockStateBox.pre = null;
             netdc.StockRefreshClear();
             StockCanvas.Children.Clear();
-            StockStateBox.count = -1;
             List<StockHoldEntity> SHEL;
             dbc.StockHoldReadAll(out SHEL);
             double all = 0;
+            double height;
             foreach (StockHoldEntity SHE in SHEL)
             {
+                if (StockStateBox.pre != null)
+                    height = StockStateBox.pre.Margin.Top + StockStateBox.pre.Height;
+                else
+                    height = -5;
                 StockStateBox box = new StockStateBox();
-                box.Margin = new Thickness(5, 5 + (10 + box.Height) * StockStateBox.count, 0, 0);
+                box.Margin = new Thickness(5, height + 10, 0, 0);
                 box.stockid = SHE.id;
                 box.UEvent += new EventHandler(uEvent);
                 StockCanvas.Children.Add(box);
@@ -211,7 +219,7 @@ namespace Stock
                     box.StockName.Text = SHE.name.Insert(2, "\r\n");
                     continue;
                 }
-                box.hold.Text = SHE.hold;
+                box.hold.Text = SHE.hold.ToString();
                 box.basemoney = Convert.ToDouble(SHE.money);
                 NetDataController.sync s = new NetDataController.sync(box.UpdataSync);
                 netdc.StockRefreshAdd(StockID, ref s);
@@ -219,6 +227,8 @@ namespace Stock
             }
             all += Convert.ToDouble(now.Text);
             total.Text = String.Format("{0:F}", all);
+            state1.Text = String.Format("{0:F}", Convert.ToDouble(total.Text) - Convert.ToDouble(now.Text));
+            state2.Text = String.Format("{0:F}%", (Convert.ToDouble(total.Text) - Convert.ToDouble(now.Text)) / Convert.ToDouble(now.Text) * 100); 
             netdc.StartRefresh();
         }
 
