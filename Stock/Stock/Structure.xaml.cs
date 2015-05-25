@@ -17,6 +17,7 @@ using System.IO;
 using Stock.Controller.DrawController;
 using Stock.Controller.NetController;
 using Stock.Controller.DBController.DBTable;
+using Stock.UIController;
 
 namespace Stock
 {
@@ -60,7 +61,7 @@ namespace Stock
             DrawDataController DDC = new DrawDataController((int)(hold.Width), (int)(hold.Height));
             hold.Source = Adapter.ImageAdapter.ImageConvert(DDC.GetImage());
             List<StockHoldEntity> SHEL;
-            Stock.MainWindow.dbc.StockHoldReadAll(out SHEL);
+            DBSyncController.Handler().StockHoldReadAll(out SHEL);
             List<string> idl = SHEL.Select(s => s.id).ToList();
             NetState.IdConvert(ref idl);
             List<DrawPieEntity> DPEL = new List<DrawPieEntity>();
@@ -149,7 +150,7 @@ namespace Stock
             {
                 DrawDataEntity DDE = new DrawDataEntity();
                 List<DrawDataEntity> DDEL = new List<DrawDataEntity>();
-                Stock.MainWindow.dbc.HistoryStockHoldReadByRange(id.Substring(1), date, days, out HSHEL);
+                DBSyncController.Handler().HistoryStockHoldReadByRange(id.Substring(1), date, days, out HSHEL);
                 if(HSHEL.Count == 0)
                     continue;
                 NetDataController.HistoryMoney(id, date, days, out money);

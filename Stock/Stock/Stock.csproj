@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Adapter\DataAdapter.cs" />
     <Compile Include="Adapter\ImageAdapter.cs" />
     <Compile Include="AddDealList.xaml.cs">
       <DependentUpon>AddDealList.xaml</DependentUpon>
@@ -77,6 +78,9 @@
     <Compile Include="StockInfo.xaml.cs">
       <DependentUpon>StockInfo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIController\DBSyncController.cs" />
+    <Compile Include="UIController\NetSyncController.cs" />
+    <Compile Include="UIController\StockStateBoxController.cs" />
     <Compile Include="UserControl\StockStateBox.xaml.cs">
       <DependentUpon>StockStateBox.xaml</DependentUpon>
     </Compile>

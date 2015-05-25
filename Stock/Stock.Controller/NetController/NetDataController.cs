@@ -19,7 +19,7 @@ namespace Stock.Controller.NetController
         //同步委托 线程返回图片数据
         public delegate void backimage(Image image);
         //委托字典 一个股票编号对应一个委托
-        private Dictionary<string, sync> stockdict = new Dictionary<string, sync>();
+        private Dictionary<string, sync[]> stockdict = new Dictionary<string, sync[]>();
         //定时器
         private Timer t;
         //网络连接日志
@@ -42,19 +42,100 @@ namespace Stock.Controller.NetController
         //增加股票以及其委托
         public bool StockRefreshAdd(string stockid,ref sync s)
         {
-            stockdict.Add(stockid, s);
+            try
+            {
+                if (!stockdict.ContainsKey(stockid))
+                {
+                    sync[] sn = new sync[2];
+                    sn[0] = s;
+                    stockdict.Add(stockid, sn);
+                }
+                else
+                {
+                    if (stockdict[stockid][0] != null)
+                        return false;
+                    stockdict[stockid][0] = s;
+                }
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+        public bool StockRefreshAddNow(string stockid, ref sync s)
+        {
+            if (!StockRefreshAdd(stockid, ref s))
+                return false;
+            GetStockInfoNow();
+            return true;
+        }
+        //增加temp股票以及其委托
+        public bool StockTempRefreshAdd(string stockid, ref sync s)
+        {
+            try
+            {
+                if (stockdict.ContainsKey(stockid))
+                {
+                    stockdict[stockid][1] = s;
+                }
+                else
+                {
+                    sync[] sn = new sync[2];
+                    sn[1] = s;
+                    stockdict.Add(stockid, sn);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            GetStockInfoNow();
             return true;
         }
         //删除股票
         public bool StockRefreshDelete(string stockid)
         {
-            stockdict.Remove(stockid);
+            try
+            {
+                if (stockdict[stockid][1] == null)
+                    stockdict.Remove(stockid);
+                else
+                    stockdict[stockid][0] = null;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+        //删除temp股票
+        public bool StockTempRefreshDelete(string stockid)
+        {
+            try
+            {
+                if (stockdict[stockid][0] == null)
+                    stockdict.Remove(stockid);
+                else
+                    stockdict[stockid][1] = null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
         //清空股票
         public bool StockRefreshClear()
         {
-            stockdict.Clear();
+            try
+            {
+                stockdict.Clear();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
         //获取k线图
@@ -99,9 +180,9 @@ namespace Stock.Controller.NetController
                 return 0;
         }
         //批量获取
-        private void GetStockInfo(object stockdict)
+        private void GetStockInfo(object stock)
         {
-            Dictionary<string, sync> dict = (Dictionary<string, sync>)stockdict;
+            Dictionary<string, sync[]> dict = (Dictionary<string, sync[]>)stock;
             if (dict.Count == 0)//委托字典不为空则联网获取数据
                 return;
             StockInfo si = new Netease();//使用网易的api
@@ -112,9 +193,18 @@ namespace Stock.Controller.NetController
             {
                 if(dict.ContainsKey(s.Key))
                 {
-                    dict[s.Key](s.Value);//将返回的字典键值作参数获取sync方法同步股票数据实体
+                    foreach (sync sn in dict[s.Key])
+                    {
+                        if (sn != null)
+                            sn(s.Value);//将返回的字典键值作参数获取sync方法同步股票数据实体
+                    }
                 }
             }
+        }
+        //提交获取
+        public void GetStockInfoNow()
+        {
+            GetStockInfo(stockdict);
         }
     }
     struct ImageEntity

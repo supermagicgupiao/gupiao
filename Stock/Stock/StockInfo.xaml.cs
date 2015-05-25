@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using Stock.Controller.NetController;
+using Stock.UIController;
 
 namespace Stock
 {
@@ -76,7 +77,6 @@ namespace Stock
             Action<Image, System.Drawing.Image> updateAction = new Action<Image, System.Drawing.Image>(ImageSync);
             k.Dispatcher.BeginInvoke(updateAction, k, image);
         }
-        private NetDataController netdc = new NetDataController();
         public string StockID;
         public string C_StockID;
         public string StockName;
@@ -96,7 +96,6 @@ namespace Stock
             else
             {
                 MessageBox.Show("股票编号不存在或者网络异常！");
-                netdc.StartRefresh();
                 this.Close();
                 return;
             }
@@ -105,21 +104,19 @@ namespace Stock
             StockTitle.Text = "股票:" + StockName + "(" + S_StockID + ")";
             NetDataController.backimage bimage = new NetDataController.backimage(UpdataImage);
             kchart k = kchart.time;
-            netdc.KchartImageGet(C_StockID, k, bimage);
+            NetSyncController.Handler().KchartImageGet(C_StockID, k, bimage);
             NetDataController.sync s = new NetDataController.sync(UpdataSync);
-            netdc.StockRefreshAdd(C_StockID, ref s);
-            netdc.StartRefresh();
+            NetSyncController.Handler().StockTempRefreshAdd(C_StockID, ref s);
         }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            netdc.StopRefresh();
+            NetSyncController.Handler().StockTempRefreshDelete(C_StockID);
         }
 
         private void GetKchart(kchart k)
         {
             NetDataController.backimage bimage = new NetDataController.backimage(UpdataImage);
-            netdc.KchartImageGet(C_StockID, k, bimage);
+            NetSyncController.Handler().KchartImageGet(C_StockID, k, bimage);
         }
 
         private void TIME_Click(object sender, RoutedEventArgs e)
@@ -156,7 +153,6 @@ namespace Stock
         private void AddDealList_Click(object sender, RoutedEventArgs e)
         {
             AddDealList ADL = new AddDealList();
-            ADL.Owner = this.Owner;
             ADL.name.Text = StockName;
             ADL.id.Text = StockID;
             ADL.date.Text = DateTime.Now.ToString();

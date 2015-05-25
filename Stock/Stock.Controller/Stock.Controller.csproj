@@ -54,6 +54,7 @@
     <Compile Include="DBController\DBTable\DealLists.cs" />
     <Compile Include="DBController\DBTable\HistoryStockHold.cs" />
     <Compile Include="DBController\DBTable\Log.cs" />
+    <Compile Include="DBController\DBTable\Money.cs" />
     <Compile Include="DBController\DBTable\Principal.cs" />
     <Compile Include="DBController\DBTable\StockHold.cs" />
     <Compile Include="DrawController\DrawDataController.cs" />

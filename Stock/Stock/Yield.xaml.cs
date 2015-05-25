@@ -15,6 +15,8 @@ using Stock.Controller.DrawController;
 using Stock.Controller.NetController;
 using Stock.Controller.DBController.DBTable;
 
+using Stock.UIController;
+
 using System.Threading;
 
 namespace Stock
@@ -56,7 +58,7 @@ namespace Stock
             DrawDataController DDC = new DrawDataController((int)(yield.Width), (int)(yield.Height));
             yield.Source = Adapter.ImageAdapter.ImageConvert(DDC.GetImage());
             List<StockHoldEntity> SHEL;
-            Stock.MainWindow.dbc.StockHoldReadAll(out SHEL);
+            DBSyncController.Handler().StockHoldReadAll(out SHEL);
             idl = SHEL.Select(s => s.id).ToList();
             NetState.IdConvert(ref idl);
         }
@@ -80,6 +82,9 @@ namespace Stock
             td.days = days;
             td.Width = (int)yield.Width;
             td.Height = (int)yield.Height;
+
+//            ThreadImageGet(td);
+
             Thread get = new Thread(new ParameterizedThreadStart(ThreadImageGet));
             get.Start(td);
         }
@@ -87,35 +92,53 @@ namespace Stock
         {
             ThreadDate td = (ThreadDate)data;
             List<HistoryStockHoldEntity> HSHELNoSort;
-            Stock.MainWindow.dbc.HistoryStockHoldReadByRange(td.date, td.days, out HSHELNoSort);
+            DBSyncController.Handler().HistoryStockHoldReadByRange(td.date, td.days, out HSHELNoSort);
             Dictionary<string, double> dict = new Dictionary<string, double>();
+            Dictionary<string, double> dict_ = new Dictionary<string, double>();
             foreach (HistoryStockHoldEntity HSHE in HSHELNoSort)
             {
                 if (!dict.ContainsKey(HSHE.id))
                 {
                     dict.Add(HSHE.id, 0);
+                    dict_.Add(HSHE.id, 0);
                 }
             }
             List<HistoryStockHoldEntity> HSHEL = HSHELNoSort.OrderBy(g => g.date).ToList();
+            
+            Dictionary<string,Dictionary<DateTime,double>> moneydict = new Dictionary<string,Dictionary<DateTime,double>>();
+
+            foreach (string x in idl)
+            {
+                Dictionary<DateTime,double> money = new Dictionary<DateTime,double>();
+                NetDataController.HistoryMoney(x, td.date, td.days, out money);
+                moneydict.Add(x, money);
+            }
+
             List<DrawDataEntity> DDEL = new List<DrawDataEntity>();
             DrawDataEntity DDE = new DrawDataEntity();
             int index = 0;
-            double fixedmoney = 0;
+            double fixedmoney = MainWindow.principal;
             for (int i = 0; i < td.days; i++)
             {
                 double money = 0;
-                int change = 0;
+                Dictionary<string, double> cdict = new Dictionary<string, double>(dict_);
                 DateTime dt = td.date.AddDays(i);
+                if (!moneydict.First().Value.ContainsKey(dt))
+                {
+                    foreach(var x in moneydict)
+                    {
+                        x.Value.Add(dt, x.Value[dt.AddDays(-1)]);
+                    }
+                }
                 DDE.date = dt;
                 if (dt > DateTime.Now)
                 {
                     break;
                 }
-                while (index < HSHEL.Count - 1 && HSHEL[index].date < dt)
+                while (index < HSHEL.Count - 1 && HSHEL[index].date <= dt)
                 {
                     dict[HSHEL[index].id] += HSHEL[index].change;
-                    if (HSHEL[index].change < 0)
-                        change += -HSHEL[index].change;
+                    cdict[HSHEL[index].id] += -HSHEL[index].change * HSHEL[index].money;
                     index++;
                 }
                 foreach (var x in dict)
@@ -125,12 +148,13 @@ namespace Stock
                         string id = idl.Where(s => s.Substring(1) == x.Key).First();
                         if (id == null)
                             continue;
-                        double m = NetDataController.HistoryMoney(id, dt);
-                        fixedmoney += m * change;
-                        money += m * x.Value + fixedmoney;
+                        double m = moneydict[id][dt];
+                        fixedmoney += cdict[x.Key];
+                        money += m * x.Value;
                     }
                 }
-                DDE.money = money;
+                money += fixedmoney;
+                DDE.money = (money - MainWindow.principal) * 100 / MainWindow.principal;
                 DDEL.Add(DDE);
             }
             DrawDataController DDC = new DrawDataController(td.Width, td.Height);

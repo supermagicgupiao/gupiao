@@ -136,7 +136,6 @@ namespace Stock
                 i = !i;
             }
         }
-
         private void Check_UIA_Checked(object sender, RoutedEventArgs e)
         {
             UIAandUIBSetColor(true);
@@ -146,7 +145,6 @@ namespace Stock
         {
             UIAandUIBSetColor(false);
         }
-
         private void STOCKLISTandSTOCKUISetColor(bool b)
         {
             string box;

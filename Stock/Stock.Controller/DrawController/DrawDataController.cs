@@ -136,13 +136,10 @@ namespace Stock.Controller.DrawController
             else
                 return;
             double max = 0;
-            double first = 0;
             foreach(DrawDataEntity DDE in DDEL)
             {
                 if (max < DDE.money)
                     max = DDE.money;
-                if (first == 0 && DDE.money > 0)
-                    first = DDE.money;
             }
             if (max == 0)
                 return;
@@ -158,7 +155,7 @@ namespace Stock.Controller.DrawController
             g.DrawLines(pen, p);
             Font font = new Font("Times New Roman", fontSize);
             brush = new SolidBrush(Color.Red);
-            g.DrawString("盈亏:" + ((DDEL.Last().money - first) * 100 / first).ToString() + "%", font, brush, new PointF(0, 0));
+            g.DrawString("盈亏:" + (DDEL.Last().money).ToString() + "%", font, brush, new PointF(0, 0));
         }
     }
     public struct DrawDataEntity

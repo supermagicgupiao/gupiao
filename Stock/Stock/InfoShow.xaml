@@ -12,13 +12,13 @@
         <Label Content="现金:" HorizontalAlignment="Left" Margin="136,70,0,0" VerticalAlignment="Top"/>
         <Label Content="本金:" HorizontalAlignment="Left" Margin="136,100,0,0" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="76,15,0,0" TextWrapping="Wrap" Text="A股" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="202,15,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="76,105,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="76,75,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="76,45,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="202,75,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="202,45,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="202,105,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="total" HorizontalAlignment="Left" Margin="202,15,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="win" HorizontalAlignment="Left" Margin="76,105,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="upwin" HorizontalAlignment="Left" Margin="76,75,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="daywin" HorizontalAlignment="Left" Margin="76,45,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="now" HorizontalAlignment="Left" Margin="202,75,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="price" HorizontalAlignment="Left" Margin="202,45,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="principal" HorizontalAlignment="Left" Margin="202,105,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

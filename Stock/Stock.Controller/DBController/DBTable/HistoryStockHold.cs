@@ -18,18 +18,19 @@ namespace Stock.Controller.DBController.DBTable
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table if not exists 'HistoryStockHold'(id varchar(7),date datetime,number int,change int)";
+            cmd.CommandText = "create table if not exists 'HistoryStockHold'(id varchar(7),date datetime,number int,change int,money real)";
             cmd.ExecuteNonQuery();
         }
         //插入数据
         public void Insert(HistoryStockHoldEntity HSHE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "insert into 'HistoryStockHold' values(@id,@date,@number,@change)";
+            cmd.CommandText = "insert into 'HistoryStockHold' values(@id,@date,@number,@change,@money)";
             cmd.Parameters.Add(new SQLiteParameter("id", HSHE.id));
             cmd.Parameters.Add(new SQLiteParameter("date", Convert.ToDateTime(HSHE.date.ToString("yyyy-MM-dd"))));
             cmd.Parameters.Add(new SQLiteParameter("number", HSHE.number));
             cmd.Parameters.Add(new SQLiteParameter("change", HSHE.change));
+            cmd.Parameters.Add(new SQLiteParameter("money", HSHE.money));
             cmd.ExecuteNonQuery();
         }
         //获取全部历史记录
@@ -53,7 +54,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(string id, DateTime date, int days, out List<HistoryStockHoldEntity> HSHEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'HistoryStockHold' where id=@id and date>@date and date<@days order by date asc";
+            cmd.CommandText = "select * from 'HistoryStockHold' where id=@id and date>=@date and date<=@days order by date asc";
             cmd.Parameters.Add(new SQLiteParameter("id", id));
             cmd.Parameters.Add(new SQLiteParameter("date", date));
             cmd.Parameters.Add(new SQLiteParameter("days", date.AddDays(days)));
@@ -64,7 +65,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(DateTime date, int days, out List<HistoryStockHoldEntity> HSHEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'HistoryStockHold' where date>@date and date<@days order by date asc";
+            cmd.CommandText = "select * from 'HistoryStockHold' where date>=@date and date<=@days order by date asc";
             cmd.Parameters.Add(new SQLiteParameter("date", date));
             cmd.Parameters.Add(new SQLiteParameter("days", date.AddDays(days)));
             SQLiteDataReader reader = cmd.ExecuteReader();
@@ -83,6 +84,7 @@ namespace Stock.Controller.DBController.DBTable
                     HSHE.date = Convert.ToDateTime(reader.GetValue(1));
                     HSHE.number = Convert.ToInt32(reader.GetValue(2));
                     HSHE.change = Convert.ToInt32(reader.GetValue(3));
+                    HSHE.money = Convert.ToInt32(reader.GetValue(4));
                     HSHEL.Add(HSHE);
                 }
             }
@@ -95,5 +97,6 @@ namespace Stock.Controller.DBController.DBTable
         public DateTime date;
         public Int32 number;
         public Int32 change;
+        public Double money;
     }
 }

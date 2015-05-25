@@ -22,6 +22,8 @@ using Stock.Controller.DBController;
 using Stock.Controller.ExcelController;
 using Stock.Controller.DBController.DBTable;
 
+using Stock.UIController;
+
 namespace Stock
 {
     /// <summary>
@@ -36,12 +38,15 @@ namespace Stock
             if (principal == 0)
                 this.Close();
         }
-        public static DBDataController dbc;
-        private double principal;
+        public static double principal;
+        public static double price = 0;
+        public static double upwin = 0;
+        public static double daywin = 0;
         private void Test()
         {
-            dbc = new DBDataController();
-            DB_ERROR dbe = dbc.Check();
+            NetSyncController.Create();
+            DBSyncController.Create();
+            DB_ERROR dbe = DBSyncController.Handler().Check();
             if (dbe == DB_ERROR.DB_CANT_CONNECT)
             {
                 MessageBox.Show("数据库无法连接");
@@ -58,11 +63,11 @@ namespace Stock
                 principal = dlg.m;
                 if (principal == 0)
                     return;
-                dbc.PrincipalCreate(principal);
+                DBSyncController.Handler().PrincipalCreate(principal);
             }
             else if (dbe == DB_ERROR.DB_OK) 
             {
-                principal = dbc.PrincipalRead();
+                principal = DBSyncController.Handler().PrincipalRead();
             }
             NET_ERROR e = NetState.Check("0000001");
             if (e == NET_ERROR.NET_CANT_CONNECT)
@@ -107,7 +112,6 @@ namespace Stock
                 return;
             }
             StockInfo dlg = new StockInfo();
-            dlg.Owner = this;
             dlg.StockID = StockID.Text;
             dlg.Show();
         }
@@ -142,7 +146,7 @@ namespace Stock
                 ExcelDataController edc = new ExcelDataController();
                 List<DealListEntity> DLEL;
                 edc.Open(openFileDialog.FileName, out DLEL);
-                dbc.DealListAdd(DLEL);
+                DBSyncController.Handler().DealListAdd(DLEL);
                 StockBox();
             }
             else
@@ -154,7 +158,7 @@ namespace Stock
         private void DealList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DealList dlg = new DealList();
-            dbc.DealListReadAll(out dlg.DLEL);
+            DBSyncController.Handler().DealListReadAll(out dlg.DLEL);
             dlg.Show();
         }
 
@@ -175,71 +179,56 @@ namespace Stock
             InfoShowTimer = new Timer(ShowBoxCheck, null, 0, 2 * 1000);
             InfoShowTimer.Change(-1, 0);
             dlg = new InfoShow();
-            now.Text = String.Format("{0:F}", principal);
             total.IsEnabled = false;
             //now.IsEnabled = false;
+
+            //程序开始准备
+            StockStateBoxController.Create(ref StockCanvas);
+            DBSyncController.Handler().SetMoneyDelegate(new DBDataController.ChangeMoney(setPrincipal), new DBDataController.ChangeMoney(setTotal), new DBDataController.ChangeMoney(setNow));
+            MoneyEntity ME;
+            DBSyncController.Handler().MoneyRead(out ME);
+            total.Text = String.Format("{0:F}", ME.total);
+            now.Text = String.Format("{0:F}", ME.now);
             StockBox();
         }
+
+        public void setPrincipal(double money)
+        {
+            principal = money;
+        }
+        public void setTotal(double money)
+        {
+            total.Text = Adapter.DataAdapter.RealTwo(money);
+            setstate1();
+            setstate2();
+        }
+        public void setNow(double money)
+        {
+            now.Text = Adapter.DataAdapter.RealTwo(money);
+            setstate1();
+            setstate2();
+        }
+        private void setstate1()
+        {
+            state1.Text = Adapter.DataAdapter.RealTwo(Convert.ToDouble(total.Text) - principal);
+        }
+        private void setstate2()
+        {
+            state2.Text = Adapter.DataAdapter.RealTwo((Convert.ToDouble(total.Text) - principal) / principal * 100) + "%";
+        }
+
+
         private void StockBox()
         {
             StockStateBox.pre = null;
-            netdc.StockRefreshClear();
             StockCanvas.Children.Clear();
             List<StockHoldEntity> SHEL;
-            dbc.StockHoldReadAll(out SHEL);
-            double all = 0;
-            double height;
+            DBSyncController.Handler().StockHoldReadAll(out SHEL);
             foreach (StockHoldEntity SHE in SHEL)
             {
-                if (StockStateBox.pre != null)
-                    height = StockStateBox.pre.Margin.Top + StockStateBox.pre.Height;
-                else
-                    height = -5;
-                StockStateBox box = new StockStateBox();
-                box.Margin = new Thickness(5, height + 10, 0, 0);
-                box.stockid = SHE.id;
-                box.UEvent += new EventHandler(uEvent);
-                StockCanvas.Children.Add(box);
-                string stockid = SHE.id;
-                string StockID = "";
-                string name;
-                if (NetState.CheckName("0" + stockid, out name) == NET_ERROR.NET_REQ_OK)
-                {
-                    StockID = "0" + stockid;
-                    box.StockName.Text = name.Insert(2, "\r\n");
-                }
-                else if (NetState.CheckName("1" + stockid, out name) == NET_ERROR.NET_REQ_OK)
-                {
-                    StockID = "1" + stockid;
-                    box.StockName.Text = name.Insert(2, "\r\n");
-                }
-                else
-                {
-                    MessageBox.Show("股票编号:" + stockid + "错误！");
-                    box.StockName.Text = SHE.name.Insert(2, "\r\n");
-                    continue;
-                }
-                box.hold.Text = SHE.hold.ToString();
-                box.basemoney = Convert.ToDouble(SHE.money);
-                NetDataController.sync s = new NetDataController.sync(box.UpdataSync);
-                netdc.StockRefreshAdd(StockID, ref s);
-                all += Convert.ToDouble(SHE.money);
+                StockStateBoxController.Handler().Add(SHE.id, SHE.name, SHE.hold, SHE.money);
             }
-            all += Convert.ToDouble(now.Text);
-            total.Text = String.Format("{0:F}", all);
-            state1.Text = String.Format("{0:F}", Convert.ToDouble(total.Text) - Convert.ToDouble(now.Text));
-            state2.Text = String.Format("{0:F}%", (Convert.ToDouble(total.Text) - Convert.ToDouble(now.Text)) / Convert.ToDouble(now.Text) * 100); 
-            netdc.StartRefresh();
-        }
-
-
-        public NetDataController netdc = new NetDataController();
-        public void uEvent(object sender, EventArgs e)
-        {
-            StockInfo dlg = new StockInfo();
-            dlg.Owner = this;
-            dlg.StockID = ((StockStateBox)sender).stockid;
-            dlg.Show();
+            NetSyncController.Handler().StartRefresh();
         }
 
         private Timer InfoShowTimer;
@@ -271,6 +260,13 @@ namespace Stock
             dlg.WindowStartupLocation = WindowStartupLocation.Manual;
             dlg.Left = this.Left + this.ActualWidth + 5;
             dlg.Top = this.Top;
+            dlg.principal.Text = Adapter.DataAdapter.RealTwo(principal);
+            dlg.total.Text = total.Text;
+            dlg.now.Text = now.Text;
+            dlg.win.Text = state1.Text;
+            dlg.upwin.Text = Adapter.DataAdapter.RealTwo(upwin);
+            dlg.daywin.Text = Adapter.DataAdapter.RealTwo(daywin);
+            dlg.price.Text = Adapter.DataAdapter.RealTwo(price);
             dlg.Show();
         }
 
@@ -292,18 +288,16 @@ namespace Stock
                 double o;
                 if (Double.TryParse(now.Text.ToString(), out o))
                 {
-                    double t = Convert.ToDouble(total.Text.ToString()) + o - mark;
+                    double t = Convert.ToDouble(total.Text) + o - mark;
                     if (t >= 1000000000)
                     {
-                        now.Text = String.Format("{0:F}", mark);
-                        return;
+                        now.Text = Adapter.DataAdapter.RealTwo(mark);
                     }
-                    total.Text = String.Format("{0:F}", t);
-                    now.Text = String.Format("{0:F}", o);
+                    DBSyncController.Handler().PrincipalChange(o - mark);
                 }
                 else
                 {
-                    now.Text = String.Format("{0:F}", mark);
+                    now.Text = Adapter.DataAdapter.RealTwo(mark);
                 }
             }
         }

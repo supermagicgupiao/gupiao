@@ -12,8 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using Stock.Controller.DBController.DBTable;
-
 using Stock.Controller.NetController;
+
+using Stock.UIController;
 
 namespace Stock
 {
@@ -31,7 +32,10 @@ namespace Stock
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.DragMove();
+                if (e.GetPosition((IInputElement)sender).Y < title.Height.Value)
+                {
+                    this.DragMove();
+                }
             }
         }
 
@@ -57,12 +61,23 @@ namespace Stock
                     if (Convert.ToInt32(number.Text) % 100 != 0)
                         throw new Exception();
                 }
-                if(taxrate.Text[taxrate.Text.Length-1]!='‰')
+                else
+                {
+                    StockHoldEntity SHE = new StockHoldEntity();
+                    SHE.id = id.Text;
+                    DBSyncController.Handler().StockHoldRead(ref SHE);
+                    if (SHE.hold < Convert.ToInt32(number.Text))
+                    {
+                        MessageBox.Show("卖出或补仓数目超出范围!");
+                        return;
+                    }
+                }
+                if (taxrate.Text[taxrate.Text.Length - 1] != '‰')
                     throw new Exception();
-                if(commission.Text[commission.Text.Length-1]!='‰')
+                if (commission.Text[commission.Text.Length - 1] != '‰')
                     throw new Exception();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 MessageBox.Show("输入的数据有误\n请检查后输入");
                 return;
@@ -78,54 +93,14 @@ namespace Stock
             DLE.commission = Convert.ToDouble(commission.Text.Substring(0,commission.Text.IndexOf("‰")));
             DLE.explain = explain.Text;
             DLE.remark = remark.Text;
-            MainWindow.dbc.DealListAdd(DLE);
-            MessageBox.Show("添加成功!");
-            UIElementCollection uc = ((MainWindow)Owner).StockCanvas.Children;
-            foreach(StockStateBox b in uc)
+            DBSyncController.Handler().DealListAdd(DLE);
+            //MessageBox.Show("添加成功!");
+            if (StockStateBoxController.Handler().Change(id.Text, type.Text, DLE.number, DLE.money))
             {
-                if (b.stockid == id.Text)
-                {
-                    if (type.Text == "买入" || type.Text == "卖空")
-                        b.hold.Text = (Convert.ToInt32(b.hold.Text) + DLE.number).ToString();
-                    else
-                        b.hold.Text = (Convert.ToInt32(b.hold.Text) - DLE.number).ToString();
-                    this.Close();
-                    return;
-                }
+                this.Close();
+                return;
             }
-            double height;
-            if (StockStateBox.pre != null)
-                height = StockStateBox.pre.Margin.Top + StockStateBox.pre.ActualHeight;
-            else
-                height = -5;
-            StockStateBox box = new StockStateBox();
-            box.Margin = new Thickness(5, height + 10, 0, 0);
-            box.stockid = id.Text;
-            box.UEvent += new EventHandler(((MainWindow)Owner).uEvent);
-            uc.Add(box);
-
-            string stockid = id.Text;
-            string StockID = "";
-            string Stockname;
-            if (NetState.CheckName("0" + stockid, out Stockname) == NET_ERROR.NET_REQ_OK)
-            {
-                StockID = "0" + stockid;
-                box.StockName.Text = Stockname.Insert(2, "\r\n");
-            }
-            else if (NetState.CheckName("1" + stockid, out Stockname) == NET_ERROR.NET_REQ_OK)
-            {
-                StockID = "1" + stockid;
-                box.StockName.Text = Stockname.Insert(2, "\r\n");
-            }
-            else
-            {
-                MessageBox.Show("股票编号:" + stockid + "错误！");
-                box.StockName.Text = name.Text.Insert(2, "\r\n");
-            }
-            box.hold.Text = number.Text;
-            box.basemoney = Convert.ToDouble(money.Text);
-            NetDataController.sync s = new NetDataController.sync(box.UpdataSync);
-            ((MainWindow)Owner).netdc.StockRefreshAdd(StockID, ref s);
+            StockStateBoxController.Handler().Add(id.Text, name.Text, Convert.ToInt32(number.Text), Convert.ToDouble(money.Text) * Convert.ToInt32(number.Text));
             this.Close();
         }
     }

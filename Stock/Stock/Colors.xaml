@@ -21,8 +21,8 @@
             <Slider x:Name="G_Color" HorizontalAlignment="Left" Margin="51,120,0,0" VerticalAlignment="Top" Width="250" ValueChanged="G_ValueChanged"/>
             <Label Content="透：" HorizontalAlignment="Left" Margin="15,11,0,0" VerticalAlignment="Top"/>
             <Label Content="红：" HorizontalAlignment="Left" Margin="15,46,0,0" VerticalAlignment="Top"/>
-            <Label Content="绿：" HorizontalAlignment="Left" Margin="15,81,0,0" VerticalAlignment="Top"/>
-            <Label Content="蓝：" HorizontalAlignment="Left" Margin="15,116,0,0" VerticalAlignment="Top"/>
+            <Label Content="蓝：" HorizontalAlignment="Left" Margin="15,81,0,0" VerticalAlignment="Top"/>
+            <Label Content="绿：" HorizontalAlignment="Left" Margin="15,116,0,0" VerticalAlignment="Top"/>
         </Grid>
     </Grid>
 </Window>

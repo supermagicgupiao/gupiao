@@ -12,6 +12,77 @@ namespace Stock.Controller.DBController
 {
     public class DBDataController
     {
+        //修改金钱委托
+        public delegate void ChangeMoney(double money);
+        private ChangeMoney pri, total, now;
+        public void SetMoneyDelegate(ChangeMoney pri,ChangeMoney total,ChangeMoney now)
+        {
+            this.pri = pri;
+            this.total = total;
+            this.now = now;
+        }
+        private void setPrincipal(double money)
+        {
+            if (pri != null)
+                pri(money);
+        }
+        private void setTotal(double money)
+        {
+            if (total != null)
+                total(money);
+        }
+        private void setNow(double money)
+        {
+            if (now != null)
+                now(money);
+        }
+        //money修改
+        //改变total
+        public void TotalChange(double m)
+        {
+            MoneyEntity ME;
+            money.Select(out ME);
+            double mon = ME.total + m;
+            money.Update(mon, 0);
+        }
+        //改变now
+        public void NowChange(double m)
+        {
+            MoneyEntity ME;
+            money.Select(out ME);
+            double mon = ME.now + m;
+            money.Update(mon, 1);
+        }
+        //两者改变
+        public void TotalNowChange(double m)
+        {
+            MoneyEntity ME;
+            money.Select(out ME);
+            ME.total += m;
+            ME.now += m;
+            money.Update(ME);
+        }
+        //创建money记录
+        private void MoneyCreate(double m1,double m2)
+        {
+            MoneyEntity ME;
+            ME.total = m1;
+            ME.now = m2;
+            money.Insert(ME);
+        }
+        //读取money记录
+        public void MoneyRead(out MoneyEntity ME)
+        {
+            money.Select(out ME);
+        }
+        //money读取设置
+        public void MoneyReadSet()
+        {
+            MoneyEntity ME;
+            money.Select(out ME);
+            setTotal(ME.total);
+            setNow(ME.now);
+        }
         //路径
         private string dbPath;
         //文件数据库连接
@@ -24,7 +95,7 @@ namespace Stock.Controller.DBController
         private Principal principal;
         private HistoryStockHold historystockhold;
         private Log log;
-
+        private Money money;
 
         //默认路径数据库
         public DBDataController()
@@ -79,6 +150,7 @@ namespace Stock.Controller.DBController
         {
             deallist.Insert(DLE);
             DealList_Insert_StockHold(DLE);
+            MoneyReadSet();
         }
         //批量增加交易记录
         public void DealListAdd(List<DealListEntity> DLEL)
@@ -88,11 +160,17 @@ namespace Stock.Controller.DBController
                 deallist.Insert(DLE);
                 DealList_Insert_StockHold(DLE);
             }
+            MoneyReadSet();
         }
         //读取全部持股构成
         public void StockHoldReadAll(out List<StockHoldEntity> SHEL)
         {
             stockhold.Select(out SHEL);
+        }
+        //读取指定id持股
+        public void StockHoldRead(ref StockHoldEntity SHE)
+        {
+            stockhold.Select(ref SHE);
         }
         //创建本金
         public void PrincipalCreate(double m)
@@ -100,13 +178,18 @@ namespace Stock.Controller.DBController
             PrincipalEntity PE = new PrincipalEntity();
             PE.money = m.ToString();
             principal.Insert(PE);
+            //总资产与现金创建
+            MoneyCreate(m, m);
+            //交易记录创建持股表
+            StockHold_Init();
         }
-        //修改本金
-        public void PrincipalWrite(double m)
+        //写入本金
+        private void PrincipalWrite(double m)
         {
             PrincipalEntity PE = new PrincipalEntity();
             PE.money = m.ToString();
             principal.Update(PE);
+            setPrincipal(m);
         }
         //读取本金
         public double PrincipalRead()
@@ -114,6 +197,13 @@ namespace Stock.Controller.DBController
             PrincipalEntity PE;
             principal.Select(out PE);
             return Convert.ToDouble(PE.money);
+        }
+        //修改本金
+        public void PrincipalChange(double m)
+        {
+            PrincipalWrite(PrincipalRead() + m);
+            TotalNowChange(m);
+            MoneyReadSet();
         }
         //保存日志
         public void LogSave(LogEntity LE)
@@ -177,14 +267,18 @@ namespace Stock.Controller.DBController
                 //内存数据库：持股表
                 stockhold = new StockHold(mem_conn);
                 historystockhold = new HistoryStockHold(mem_conn);
-
-                //交易记录创建持股表
-                StockHold_Init();
+                money = new Money(mem_conn);
 
                 PrincipalEntity PE;
                 principal.Select(out PE);//本金表检测数据是否存在
                 if (PE.money == null)
                     return DB_ERROR.DB_DATA_NOT_EXISTS;//数据不存在
+                //内存建立总资产和现金
+                double m = Convert.ToDouble(PE.money);
+                MoneyCreate(m, m);
+
+                //交易记录创建持股表
+                StockHold_Init();
             }
             catch (SQLiteException)
             {
@@ -201,6 +295,7 @@ namespace Stock.Controller.DBController
             {
                 DealList_Insert_StockHold(DLE);
             }
+            MoneyReadSet();
         }
         //按类型转换
         private void DealList_Insert_StockHold(DealListEntity DLE)
@@ -209,15 +304,30 @@ namespace Stock.Controller.DBController
             SHE.id = DLE.id;
             SHE.name = DLE.name;
             if (DLE.type == "买入")
+            {
                 SHE.hold = DLE.number;
+                NowChange(-(DLE.number * DLE.money));
+            }
             else if (DLE.type == "卖出")
+            {
                 SHE.hold = -DLE.number;
+                NowChange(DLE.number * DLE.money);
+            }
             else if (DLE.type == "卖空")
+            {
                 SHE.hold = DLE.number;
+                NowChange(-(DLE.number * DLE.money));
+            }
             else if (DLE.type == "补仓")
+            {
                 SHE.hold = -DLE.number;
+                NowChange(DLE.number * DLE.money);
+            }
             else
+            {
                 SHE.hold = DLE.number;
+                NowChange(-(DLE.number * DLE.money));
+            }
             SHE.money = Convert.ToDouble(DLE.money) * Convert.ToDouble(SHE.hold);
             StockHoldEntity SHE_=new StockHoldEntity();
             SHE_.id = SHE.id;
@@ -227,6 +337,7 @@ namespace Stock.Controller.DBController
             HSHE.number = SHE_.hold;
             HSHE.date = DLE.date;
             HSHE.change = SHE.hold;
+            HSHE.money = DLE.money;
             historystockhold.Insert(HSHE);
             if (SHE_.name != null)
             {

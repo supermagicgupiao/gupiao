@@ -82,9 +82,10 @@ namespace StockTest
             Assert.AreEqual(100000000000000.00, DBC.PrincipalRead());
             for (int i = 0; i < 100; i++)
             {
+                double a = DBC.PrincipalRead();
                 double m = 12.34 * i;
-                DBC.PrincipalWrite(m);
-                Assert.AreEqual(m.ToString(), DBC.PrincipalRead().ToString());
+                DBC.PrincipalChange(m);
+                Assert.AreEqual((a + m).ToString(), DBC.PrincipalRead().ToString());
             }
         }
         [TestMethod]

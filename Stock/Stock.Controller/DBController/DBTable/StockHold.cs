@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
 using System.Data.SQLite;
 
 namespace Stock.Controller.DBController.DBTable
@@ -64,7 +62,7 @@ namespace Stock.Controller.DBController.DBTable
                 if (reader.Read())
                 {
                     SHE.name = reader.GetValue(0).ToString();
-                    SHE.hold = Convert.ToInt32(reader.GetValue(1).ToString());
+                    SHE.hold = Convert.ToInt32(reader.GetValue(1));
                     SHE.money = Convert.ToDouble(reader.GetValue(2));
                 }
             }
