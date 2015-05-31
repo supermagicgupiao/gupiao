@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Adapter\DataAdapter.cs" />
+    <Compile Include="Adapter\ErrorAdapter.cs" />
     <Compile Include="Adapter\ImageAdapter.cs" />
     <Compile Include="AddDealList.xaml.cs">
       <DependentUpon>AddDealList.xaml</DependentUpon>
@@ -81,6 +82,7 @@
     <Compile Include="UIController\DBSyncController.cs" />
     <Compile Include="UIController\NetSyncController.cs" />
     <Compile Include="UIController\StockStateBoxController.cs" />
+    <Compile Include="UIController\UserPanelController.cs" />
     <Compile Include="UserControl\StockStateBox.xaml.cs">
       <DependentUpon>StockStateBox.xaml</DependentUpon>
     </Compile>

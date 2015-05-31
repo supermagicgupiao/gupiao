@@ -30,6 +30,10 @@ namespace Stock.UIController
         {
             return SSBC;
         }
+        public static void setCanvas(ref Canvas canvas)
+        {
+            SSBC.canvas = canvas;
+        }
         public bool Add(string id,string name,int hold,double money)
         {
             double height = -5;

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Stock.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="670" Width="300" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Background="{DynamicResource MainColorBrush}" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
+        Title="MainWindow" Height="677" Width="300" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" Background="{DynamicResource MainColorBrush}" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
     <Grid x:Name="MainGrid" MouseMove="MainGrid_MouseMove" MouseDown="MainGrid_MouseDown" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="47"/>
@@ -17,18 +17,21 @@
         <TextBox x:Name="total" HorizontalAlignment="Left" Height="27" Margin="54,8,0,0" VerticalAlignment="Top" Width="132" Grid.Row="1" FontSize="20" IsReadOnly="True" FontWeight="Thin" TextAlignment="Right"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,48,0,0" TextWrapping="Wrap" Text="现:" VerticalAlignment="Top" RenderTransformOrigin="0.398,1.118" FontSize="18" Grid.Row="1"/>
         <TextBox x:Name="now" HorizontalAlignment="Left" Height="27" Margin="54,46,0,0" VerticalAlignment="Top" Width="132" Grid.Row="1" FontSize="20" IsReadOnly="True" FontWeight="Thin" TextAlignment="Right" MouseDoubleClick="now_MouseDoubleClick" LostKeyboardFocus="now_LostKeyboardFocus" />
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="66" Margin="206,8,0,0" VerticalAlignment="Top" Width="84" Grid.Row="1">
+        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="66" Margin="206,8,0,0" VerticalAlignment="Top" Width="84" Grid.Row="1">
             <Grid x:Name="state" Background="Transparent" HorizontalAlignment="Left" Height="66" VerticalAlignment="Top" Width="84" Grid.Row="1" MouseEnter="Rectangle_MouseEnter" MouseLeave="Rectangle_MouseLeave" Focusable="True">
-                <Label Content="盈亏" HorizontalAlignment="Center" FontSize="16" Margin="19,0,19,34"/>
+                <Label Content="盈亏" HorizontalAlignment="Center" FontSize="18" Margin="19,0,19,34"/>
                 <TextBlock x:Name="state1" TextWrapping="Wrap" HorizontalAlignment="Center" Text="" Margin="10,30,10,20" Foreground="Maroon"/>
                 <TextBlock x:Name="state2" TextWrapping="Wrap" HorizontalAlignment="Center" Text="" Margin="10,45,10,5" Foreground="Maroon"/>
             </Grid>
         </Border>
-        <TextBox x:Name="StockID" HorizontalAlignment="Left" Height="23" Margin="10,21,0,0" TextWrapping="Wrap" Text="搜索:请输入股票编号" VerticalAlignment="Top" Width="202" FontSize="16" Grid.Row="2" GotFocus="StockID_GotFocus" LostFocus="StockID_LostFocus" />
-        <Button Content="搜索" HorizontalAlignment="Left" Margin="239,21,0,0" VerticalAlignment="Top" Width="51" Height="23" Grid.Row="2" Click="Search_Click"/>
-        <Canvas Background="{DynamicResource CanvasColor}" x:Name="StockCanvas" HorizontalAlignment="Left" Height="460" Margin="10,11,0,0" VerticalAlignment="Top" Width="280" Grid.Row="3" MouseWheel="StockCanvas_MouseWheel" ClipToBounds="True"/>
-        <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="10,4,0,0" VerticalAlignment="Top" Width="20" Source="Resources/openexcel.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="OpenExcle_MouseLeftButtonDown"/>
-        <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="54,4,0,0" VerticalAlignment="Top" Width="20" Source="Resources/deallist.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="DealList_MouseLeftButtonDown"/>
+        <TextBox x:Name="StockID" HorizontalAlignment="Left" Height="23" Margin="10,15,0,0" TextWrapping="Wrap" Text="搜索:请输入股票编号" VerticalAlignment="Top" Width="202" FontSize="16" Grid.Row="2" GotFocus="StockID_GotFocus" LostFocus="StockID_LostFocus" />
+        <Button Content="搜索" HorizontalAlignment="Left" Margin="239,15,0,0" VerticalAlignment="Top" Width="51" Height="23" Grid.Row="2" Click="Search_Click"/>
+        <StackPanel x:Name="UserPanel" HorizontalAlignment="Left" Height="30" Margin="10,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="280">
+            <ComboBox Height="28"/>
+        </StackPanel>
+        <Canvas Background="{DynamicResource CanvasColor}" x:Name="StockCanvas" HorizontalAlignment="Left" Height="446" Margin="10,35,0,0" VerticalAlignment="Top" Width="280" Grid.Row="3" MouseWheel="StockCanvas_MouseWheel" ClipToBounds="True"/>
+        <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="10,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/openexcel.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="OpenExcle_MouseLeftButtonDown"/>
+        <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="54,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/deallist.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="DealList_MouseLeftButtonDown"/>
         <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="100,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/structure.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="Structure_MouseLeftButtonDown"/>
         <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="148,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/yield.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="Yield_MouseLeftButtonDown"/>
         <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="270,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/color.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="Color_MouseLeftButtonDown"/>

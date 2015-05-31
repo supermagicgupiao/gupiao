@@ -44,44 +44,8 @@ namespace Stock
         public static double daywin = 0;
         private void Test()
         {
-            NetSyncController.Create();
-            DBSyncController.Create();
-            DB_ERROR dbe = DBSyncController.Handler().Check();
-            if (dbe == DB_ERROR.DB_CANT_CONNECT)
-            {
-                MessageBox.Show("数据库无法连接");
-            }
-            else if (dbe == DB_ERROR.DB_TABLE_CRACK)
-            {
-                MessageBox.Show("数据库表损坏，无法重建");
-            }
-            else if (dbe == DB_ERROR.DB_DATA_NOT_EXISTS || dbe == DB_ERROR.DB_TABLE_CRACK_FIX)
-            {
-                MessageBox.Show("数据不存在");
-                InputMoney dlg = new InputMoney();
-                dlg.ShowDialog();
-                principal = dlg.m;
-                if (principal == 0)
-                    return;
-                DBSyncController.Handler().PrincipalCreate(principal);
-            }
-            else if (dbe == DB_ERROR.DB_OK) 
-            {
-                principal = DBSyncController.Handler().PrincipalRead();
-            }
-            NET_ERROR e = NetState.Check("0000001");
-            if (e == NET_ERROR.NET_CANT_CONNECT)
-            {
-                MessageBox.Show("网络无法连接");
-            }
-            else if (e == NET_ERROR.NET_JSON_NOT_EXISTS)
-            {
-                MessageBox.Show("数据不存在");
-            }
-            else if (e == NET_ERROR.NET_REQ_ERROR)
-            {
-                MessageBox.Show("请求错误");
-            }
+            UserPanelController UPC = UserPanelController.Create();
+            Adapter.ErrorAdapter.Show(NetState.Check("0000001"));
         }
         private void MainGrid_MouseMove(object sender, MouseEventArgs e)
         {
@@ -183,12 +147,15 @@ namespace Stock
             //now.IsEnabled = false;
 
             //程序开始准备
+
             StockStateBoxController.Create(ref StockCanvas);
-            DBSyncController.Handler().SetMoneyDelegate(new DBDataController.ChangeMoney(setPrincipal), new DBDataController.ChangeMoney(setTotal), new DBDataController.ChangeMoney(setNow));
-            MoneyEntity ME;
-            DBSyncController.Handler().MoneyRead(out ME);
-            total.Text = String.Format("{0:F}", ME.total);
-            now.Text = String.Format("{0:F}", ME.now);
+            //UserPanelController.Create(ref UserPanel);
+            //DBSyncController.Handler().SetMoneyDelegate(new DBDataController.ChangeMoney(setPrincipal), new DBDataController.ChangeMoney(setTotal), new DBDataController.ChangeMoney(setNow));
+            //MoneyEntity ME;
+            //DBSyncController.Handler().MoneyRead(out ME);
+            //total.Text = String.Format("{0:F}", ME.total);
+            //now.Text = String.Format("{0:F}", ME.now);
+                     
             StockBox();
         }
 

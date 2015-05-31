@@ -9,30 +9,32 @@ namespace Stock.Controller.DBController.DBTable
     class DealLists
     {
         private SQLiteConnection conn;
-        public DealLists(SQLiteConnection conn)
+        private string user;
+        public DealLists(SQLiteConnection conn, string name)
         {
             this.conn = conn;
+            this.user=name;
             Create();
         }
         //表不存在则创建
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table if not exists 'DealList'(name varchar(8),id varchar(7),date datetime,type int2,money real,number int,taxrate real,commission real,explain text,remark text)";
+            cmd.CommandText = "create table if not exists '" + user + "_DealList'(name varchar(8),id varchar(7),date datetime,type int2,money real,number int,taxrate real,commission real,explain text,remark text)";
             cmd.ExecuteNonQuery();
         }
         //删除表
         public void Drop()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "drop table 'DealList'";
+            cmd.CommandText = "drop table if exists '" + user + "_DealList'";
             cmd.ExecuteNonQuery();
         }
         //插入数据
         public void Insert(DealListEntity DLE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "insert into 'DealList' values(@name,@id,@date,@type,@money,@number,@taxrate,@commission,@explain,@remark)";
+            cmd.CommandText = "insert into '" + user + "_DealList' values(@name,@id,@date,@type,@money,@number,@taxrate,@commission,@explain,@remark)";
             cmd.Parameters.Add(new SQLiteParameter("name", DLE.name));
             cmd.Parameters.Add(new SQLiteParameter("id", DLE.id));
             cmd.Parameters.Add(new SQLiteParameter("date", DLE.date));
@@ -49,7 +51,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(string id, out List<DealListEntity> DLEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'DealList' where id=@id";
+            cmd.CommandText = "select * from '" + user + "_DealList' where id=@id";
             cmd.Parameters.Add(new SQLiteParameter("id", id));
             SQLiteDataReader reader = cmd.ExecuteReader();
             DLEL = Package(reader);
@@ -58,7 +60,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(out List<DealListEntity> DLEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'DealList'";
+            cmd.CommandText = "select * from '" + user + "_DealList'";
             SQLiteDataReader reader = cmd.ExecuteReader();
             DLEL = Package(reader);
         }

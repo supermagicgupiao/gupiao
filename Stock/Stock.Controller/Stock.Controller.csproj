@@ -50,13 +50,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBController\DBConnection\FileConnection.cs" />
+    <Compile Include="DBController\DBConnection\MemConnection.cs" />
     <Compile Include="DBController\DBDataController.cs" />
+    <Compile Include="DBController\DBDelegateBridge.cs" />
+    <Compile Include="DBController\DBError.cs" />
     <Compile Include="DBController\DBTable\DealLists.cs" />
     <Compile Include="DBController\DBTable\HistoryStockHold.cs" />
     <Compile Include="DBController\DBTable\Log.cs" />
-    <Compile Include="DBController\DBTable\Money.cs" />
     <Compile Include="DBController\DBTable\Principal.cs" />
     <Compile Include="DBController\DBTable\StockHold.cs" />
+    <Compile Include="DBController\UsersController.cs" />
+    <Compile Include="DBController\UserTable\Users.cs" />
     <Compile Include="DrawController\DrawDataController.cs" />
     <Compile Include="ExcelController\ExcelDataController.cs" />
     <Compile Include="NetController\NetDataController.cs" />

@@ -9,30 +9,32 @@ namespace Stock.Controller.DBController.DBTable
     class StockHold
     {
         private SQLiteConnection conn;
-        public StockHold(SQLiteConnection conn)
+        private string user;
+        public StockHold(SQLiteConnection conn, string name)
         {
             this.conn = conn;
+            this.user = name;
             Create();
         }
         //创建表
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table 'StockHold'(id varchar(7),name varchar,hold integer,money real)";
+            cmd.CommandText = "create table '" + user + "_StockHold'(id varchar(7) unique,name varchar,hold integer,money real)";
             cmd.ExecuteNonQuery();
         }
         //删除表
         public void Drop()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "drop table 'StockHold'";
+            cmd.CommandText = "drop table if exists '" + user + "_StockHold'";
             cmd.ExecuteNonQuery();
         }
         //插入数据
         public void Insert(StockHoldEntity SHE)
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "insert into 'StockHold' values(@id,@name,@hold,@money)";
+            cmd.CommandText = "insert into '" + user + "_StockHold' values(@id,@name,@hold,@money)";
             cmd.Parameters.Add(new SQLiteParameter("id", SHE.id));
             cmd.Parameters.Add(new SQLiteParameter("name", SHE.name));
             cmd.Parameters.Add(new SQLiteParameter("hold", SHE.hold));
@@ -44,7 +46,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Update(StockHoldEntity SHE)
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "update 'StockHold' set hold=@hold,money=@money where id=@id";
+            cmd.CommandText = "update '" + user + "_StockHold' set hold=@hold,money=@money where id=@id";
             cmd.Parameters.Add(new SQLiteParameter("id", SHE.id));
             cmd.Parameters.Add(new SQLiteParameter("hold", SHE.hold));
             cmd.Parameters.Add(new SQLiteParameter("money", SHE.money));
@@ -54,7 +56,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(ref StockHoldEntity SHE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select name,hold,money from 'StockHold' where id=@id";
+            cmd.CommandText = "select name,hold,money from '" + user + "_StockHold' where id=@id";
             cmd.Parameters.Add(new SQLiteParameter("id", SHE.id));
             SQLiteDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
@@ -72,7 +74,7 @@ namespace Stock.Controller.DBController.DBTable
         {
             SHEL = new List<StockHoldEntity>();
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'StockHold'";
+            cmd.CommandText = "select * from '" + user + "_StockHold'";
             StockHoldEntity SHE = new StockHoldEntity();
             SQLiteDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)

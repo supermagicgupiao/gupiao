@@ -39,12 +39,12 @@ namespace Stock
             double ud = m - basemoney;
             updown.Text = Adapter.DataAdapter.RealTwo(ud);
 
-            DBSyncController.Handler().TotalChange(ud - totalMark);
-            MainWindow.price += m - priceMark;
-            if (pre == this)
-            {
-                DBSyncController.Handler().MoneyReadSet();
-            }
+            //DBSyncController.Handler().TotalChange(ud - totalMark);
+            //MainWindow.price += m - priceMark;
+            //if (pre == this)
+            //{
+            //    DBSyncController.Handler().MoneyReadSet();
+            //}
             totalMark = ud;
             priceMark = m;
         }

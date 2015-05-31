@@ -9,30 +9,32 @@ namespace Stock.Controller.DBController.DBTable
     class Log
     {
         private SQLiteConnection conn;
-        public Log(SQLiteConnection conn)
+        private string user;
+        public Log(SQLiteConnection conn, string name)
         {
             this.conn = conn;
+            this.user = name;
             Create();
         }
         //表不存在则创建
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table if not exists 'Log'(state varchar,context text)";
+            cmd.CommandText = "create table if not exists '" + user + "_Log'(state varchar,context text)";
             cmd.ExecuteNonQuery();
         }
         //删除表
         public void Drop()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "drop table 'Log'";
+            cmd.CommandText = "drop table if exists '" + user + "_Log'";
             cmd.ExecuteNonQuery();
         }
         //插入数据
         public void Insert(LogEntity log)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "insert into 'Log' values(@state,@context)";
+            cmd.CommandText = "insert into '" + user + "_Log' values(@state,@context)";
             cmd.Parameters.Add(new SQLiteParameter("state", log.state));
             cmd.Parameters.Add(new SQLiteParameter("context", log.context));
             cmd.ExecuteNonQuery();
@@ -41,7 +43,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(out List<LogEntity> LEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'Log'";
+            cmd.CommandText = "select * from '" + user + "_Log'";
             SQLiteDataReader reader = cmd.ExecuteReader();
             LogEntity LE = new LogEntity();
             LEL = new List<LogEntity>();

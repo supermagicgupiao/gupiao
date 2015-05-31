@@ -11,19 +11,23 @@ namespace Stock.UIController
     {
         private static DBDataController DBC = null;
         private DBSyncController() { }
-        public static DBDataController Create()
-        {
-            if (DBC == null)
-            {
-                DBC = new DBDataController();
-                return DBC;
-            }
-            else
-                return DBC;
-        }
+        //public static DBDataController Create()
+        //{
+        //    if (DBC == null)
+        //    {
+        //        DBC = new DBDataController();
+        //        return DBC;
+        //    }
+        //    else
+        //        return DBC;
+        //}
         public static DBDataController Handler()
         {
             return DBC;
+        }
+        public static void setDBDataController(ref DBDataController DBC_)
+        {
+            DBC = DBC_;
         }
     }
 }

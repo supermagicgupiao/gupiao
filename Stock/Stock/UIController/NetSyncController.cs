@@ -11,19 +11,23 @@ namespace Stock.UIController
     {
         private static NetDataController NDC = null;
         private NetSyncController() { }
-        public static NetDataController Create()
-        {
-            if (NDC == null)
-            {
-                NDC = new NetDataController();
-                return NDC;
-            }
-            else
-                return NDC;
-        }
+        //public static NetDataController Create()
+        //{
+        //    if (NDC == null)
+        //    {
+        //        NDC = new NetDataController();
+        //        return NDC;
+        //    }
+        //    else
+        //        return NDC;
+        //}
         public static NetDataController Handler()
         {
             return NDC;
+        }
+        public static void setNetDataController(ref NetDataController NDC_)
+        {
+            NDC = NDC_;
         }
     }
 }

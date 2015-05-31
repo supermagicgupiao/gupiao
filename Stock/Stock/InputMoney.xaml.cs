@@ -26,11 +26,14 @@ namespace Stock
         private void ButtonClose_Click(object sender, RoutedEventArgs e)
         {
             m = 0;
+            n = "";
             this.Close();
         }
         public double m;
+        public string n;
         private void ButtonOK_Click(object sender, RoutedEventArgs e)
         {
+            n = name.Text;
             if (Double.TryParse(money.Text, out m) && m!=0)
                 this.Close();
             else

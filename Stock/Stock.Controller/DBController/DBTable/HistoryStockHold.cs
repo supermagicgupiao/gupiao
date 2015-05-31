@@ -9,23 +9,32 @@ namespace Stock.Controller.DBController.DBTable
     class HistoryStockHold
     {
         private SQLiteConnection conn;
-        public HistoryStockHold(SQLiteConnection conn)
+        private string user;
+        public HistoryStockHold(SQLiteConnection conn, string name)
         {
             this.conn = conn;
+            this.user = name;
             Create();
         }
         //表不存在则创建
         public void Create()
         {
             SQLiteCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "create table if not exists 'HistoryStockHold'(id varchar(7),date datetime,number int,change int,money real)";
+            cmd.CommandText = "create table if not exists '" + user + "_HistoryStockHold'(id varchar(7),date datetime,number int,change int,money real)";
+            cmd.ExecuteNonQuery();
+        }
+        //删除表
+        public void Drop()
+        {
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "drop table if exists '" + user + "_HistoryStockHold'";
             cmd.ExecuteNonQuery();
         }
         //插入数据
         public void Insert(HistoryStockHoldEntity HSHE)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "insert into 'HistoryStockHold' values(@id,@date,@number,@change,@money)";
+            cmd.CommandText = "insert into '" + user + "_HistoryStockHold' values(@id,@date,@number,@change,@money)";
             cmd.Parameters.Add(new SQLiteParameter("id", HSHE.id));
             cmd.Parameters.Add(new SQLiteParameter("date", Convert.ToDateTime(HSHE.date.ToString("yyyy-MM-dd"))));
             cmd.Parameters.Add(new SQLiteParameter("number", HSHE.number));
@@ -37,7 +46,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(out List<HistoryStockHoldEntity> HSHEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'HistoryStockHold'";
+            cmd.CommandText = "select * from '" + user + "_HistoryStockHold'";
             SQLiteDataReader reader = cmd.ExecuteReader();
             HSHEL = Package(reader);
         }
@@ -45,7 +54,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(string id, out List<HistoryStockHoldEntity> HSHEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'HistoryStockHold' where id=@id";
+            cmd.CommandText = "select * from '" + user + "_HistoryStockHold' where id=@id";
             cmd.Parameters.Add(new SQLiteParameter("id", id));
             SQLiteDataReader reader = cmd.ExecuteReader();
             HSHEL = Package(reader);
@@ -54,7 +63,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(string id, DateTime date, int days, out List<HistoryStockHoldEntity> HSHEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'HistoryStockHold' where id=@id and date>=@date and date<=@days order by date asc";
+            cmd.CommandText = "select * from '" + user + "_HistoryStockHold' where id=@id and date>=@date and date<=@days order by date asc";
             cmd.Parameters.Add(new SQLiteParameter("id", id));
             cmd.Parameters.Add(new SQLiteParameter("date", date));
             cmd.Parameters.Add(new SQLiteParameter("days", date.AddDays(days)));
@@ -65,7 +74,7 @@ namespace Stock.Controller.DBController.DBTable
         public void Select(DateTime date, int days, out List<HistoryStockHoldEntity> HSHEL)
         {
             SQLiteCommand cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "select * from 'HistoryStockHold' where date>=@date and date<=@days order by date asc";
+            cmd.CommandText = "select * from '" + user + "_HistoryStockHold' where date>=@date and date<=@days order by date asc";
             cmd.Parameters.Add(new SQLiteParameter("date", date));
             cmd.Parameters.Add(new SQLiteParameter("days", date.AddDays(days)));
             SQLiteDataReader reader = cmd.ExecuteReader();
