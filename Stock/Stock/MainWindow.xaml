@@ -26,9 +26,8 @@
         </Border>
         <TextBox x:Name="StockID" HorizontalAlignment="Left" Height="23" Margin="10,15,0,0" TextWrapping="Wrap" Text="搜索:请输入股票编号" VerticalAlignment="Top" Width="202" FontSize="16" Grid.Row="2" GotFocus="StockID_GotFocus" LostFocus="StockID_LostFocus" />
         <Button Content="搜索" HorizontalAlignment="Left" Margin="239,15,0,0" VerticalAlignment="Top" Width="51" Height="23" Grid.Row="2" Click="Search_Click"/>
-        <StackPanel x:Name="UserPanel" HorizontalAlignment="Left" Height="30" Margin="10,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="280">
-            <ComboBox Height="28"/>
-        </StackPanel>
+        <ComboBox x:Name="UserSwitch" Height="28" Margin="10,4,49,451" Grid.Row="3" FontSize="18" FontWeight="Thin"/>
+        <Image Grid.Row="3" HorizontalAlignment="Left" Height="28" Margin="262,4,0,0" VerticalAlignment="Top" Width="28" Source="Resources/add.png" Stretch="Fill" MouseLeftButtonDown="Add_User"/>
         <Canvas Background="{DynamicResource CanvasColor}" x:Name="StockCanvas" HorizontalAlignment="Left" Height="446" Margin="10,35,0,0" VerticalAlignment="Top" Width="280" Grid.Row="3" MouseWheel="StockCanvas_MouseWheel" ClipToBounds="True"/>
         <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="10,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/openexcel.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="OpenExcle_MouseLeftButtonDown"/>
         <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="54,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/deallist.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="DealList_MouseLeftButtonDown"/>

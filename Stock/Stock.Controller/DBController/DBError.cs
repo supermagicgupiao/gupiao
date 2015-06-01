@@ -14,5 +14,6 @@ namespace Stock.Controller.DBController
         DB_DATA_NOT_EXISTS,
         DB_USER_TABLE_EXISTS,
         DB_USER_EXISTS,
+        DB_DATA_CANT_USE,
     }
 }

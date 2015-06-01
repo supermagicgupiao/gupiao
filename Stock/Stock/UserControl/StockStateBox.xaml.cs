@@ -24,11 +24,20 @@ namespace Stock
     {
         public static StockStateBox pre = null;
         public double basemoney;
-        public StockStateBox()
+        public StockStateBox(ChangeValues changeValues)
         {
             InitializeComponent();
             pre = this;
+            this.changeValues = changeValues;
         }
+
+        public delegate void ChangeValues(InfoEntity IE);
+        private ChangeValues changeValues;
+
+        public static double total;
+        public static double daywin;
+        public static double upwin;
+
         private double totalMark = 0;
         private double priceMark = 0;
         private void pricesync(TextBox tb, string s)
@@ -39,25 +48,26 @@ namespace Stock
             double ud = m - basemoney;
             updown.Text = Adapter.DataAdapter.RealTwo(ud);
 
-            //DBSyncController.Handler().TotalChange(ud - totalMark);
-            //MainWindow.price += m - priceMark;
-            //if (pre == this)
-            //{
-            //    DBSyncController.Handler().MoneyReadSet();
-            //}
-            totalMark = ud;
+            InfoEntity IE = new InfoEntity();
+            IE.win = m - totalMark;
+            IE.price = m - priceMark;
+            changeValues(IE);
+            totalMark = m;
             priceMark = m;
         }
+
 
         private double upwinMark = 0;
         private double daywinMark = 0;
         private void updownsync(string s)
         {
             double temp = Convert.ToDouble(hold.Text) * Convert.ToDouble(s) * Convert.ToDouble(price.Text) / 100;
-            MainWindow.daywin += temp - daywinMark;
+            InfoEntity IE = new InfoEntity();
+            IE.daywin += temp - daywinMark;
             daywinMark = temp;
-            MainWindow.upwin = Convert.ToDouble(hold.Text) * (Convert.ToDouble(s) - upwinMark) * Convert.ToDouble(price.Text) / 100;
+            IE.upwin = Convert.ToDouble(hold.Text) * (Convert.ToDouble(s) - upwinMark) * Convert.ToDouble(price.Text) / 100;
             upwinMark = Convert.ToDouble(s);
+            changeValues(IE);
         }
         public void UpdataSync(StockInfoEntity SIE)
         {

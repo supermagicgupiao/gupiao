@@ -37,6 +37,10 @@ namespace Stock.Adapter
             else if (dbe == DB_ERROR.DB_USER_EXISTS)
             {
                 MessageBox.Show("用户已经存在");
+            }
+            else if (dbe == DB_ERROR.DB_DATA_CANT_USE)
+            {
+                MessageBox.Show("数据不可用");
             } 
             else if (dbe == DB_ERROR.DB_OK) 
             {

@@ -95,12 +95,7 @@ namespace Stock
             DLE.remark = remark.Text;
             DBSyncController.Handler().DealListAdd(DLE);
             //MessageBox.Show("添加成功!");
-            if (StockStateBoxController.Handler().Change(id.Text, type.Text, DLE.number, DLE.money))
-            {
-                this.Close();
-                return;
-            }
-            StockStateBoxController.Handler().Add(id.Text, name.Text, Convert.ToInt32(number.Text), Convert.ToDouble(money.Text) * Convert.ToInt32(number.Text));
+            //StockStateBoxController.Handler().Add(id.Text, name.Text, Convert.ToInt32(number.Text), Convert.ToDouble(money.Text) * Convert.ToInt32(number.Text));
             this.Close();
         }
     }

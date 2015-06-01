@@ -7,13 +7,17 @@ using System.Windows.Controls;
 using System.Windows;
 
 using Stock.Controller.NetController;
+using Stock.Controller.DBController;
+using Stock.Controller.DBController.DBTable;
 
 namespace Stock.UIController
 {
     class StockStateBoxController
     {
+        private List<StockStateBox> canvasbox;
         private Canvas canvas;
         private static StockStateBoxController SSBC;
+        public static InfoDelegate ID;
         private StockStateBoxController() { }
         public static StockStateBoxController Create(ref Canvas canvas)
         {
@@ -30,19 +34,40 @@ namespace Stock.UIController
         {
             return SSBC;
         }
-        public static void setCanvas(ref Canvas canvas)
+        public void StockBoxInit()
         {
-            SSBC.canvas = canvas;
+            StockStateBox.pre = null;
+            canvasbox.Clear();
+            canvas.Children.Clear();
+            List<StockHoldEntity> SHEL;
+            DBSyncController.Handler().StockHoldReadAll(out SHEL);
+            foreach (StockHoldEntity SHE in SHEL)
+            {
+                StockStateBoxController.Handler().Add(SHE.id, SHE.name, SHE.hold, SHE.money);
+            }
+            NetSyncController.Handler().StartRefresh();
+        }
+        public void setCanvas(ref List<StockStateBox> boxlist)
+        {
+            this.canvasbox = boxlist;
+            canvas.Children.Clear();
+            if (canvasbox.Count != 0)
+                StockStateBox.pre = canvasbox.Last();
+            else
+                StockStateBox.pre = null;
+            foreach (StockStateBox item in canvasbox)
+            {
+                canvas.Children.Add(item);
+            }
         }
         public bool Add(string id,string name,int hold,double money)
         {
             double height = -5;
             if (StockStateBox.pre != null)
                 height = StockStateBox.pre.Margin.Top + StockStateBox.pre.Height;
-            StockStateBox box = new StockStateBox();
+            StockStateBox box = new StockStateBox(new StockStateBox.ChangeValues(ID.change));
             box.Margin = new Thickness(5, height + 10, 0, 0);
             box.stockid = id;
-            canvas.Children.Add(box);
 
             string StockID = "";
             string netname;
@@ -71,6 +96,9 @@ namespace Stock.UIController
                 NetSyncController.Handler().StockRefreshDelete(StockID);
                 NetSyncController.Handler().StockRefreshAdd(StockID, ref s);
             }
+
+            canvas.Children.Add(box);
+            canvasbox.Add(box);
             return true;
         }
         public double ExistsRemove(string id)
@@ -83,27 +111,29 @@ namespace Stock.UIController
                     if (StockStateBox.pre == SSB)
                         height = SSB.Margin.Top;
                     canvas.Children.Remove(SSB);
+                    canvasbox.Remove(SSB);
                     return height;
                 }
             }
             return height;
         }
-        public bool Change(string id,string type,int number,double money)
+        public void GetDelegateValues(StockHoldEntity SHE)
+        {
+            if (!Change(SHE.id, SHE.hold, SHE.money))
+            {
+                Add(SHE.id, SHE.name, SHE.hold, SHE.money);
+            }
+        }
+
+        public bool Change(string id, int hold, double money)
         {
             foreach (StockStateBox SSB in canvas.Children)
             {
                 if (SSB.stockid == id)
                 {
-                    if (type == "买入" || type == "卖空")
-                    {
-                        SSB.hold.Text = (Convert.ToInt32(SSB.hold.Text) + number).ToString();
-                        SSB.basemoney += number * money;
-                    }
-                    else
-                    {
-                        SSB.hold.Text = (Convert.ToInt32(SSB.hold.Text) - number).ToString();
-                        SSB.basemoney -= number * money;
-                    }
+
+                    SSB.hold.Text = hold.ToString();
+                    SSB.basemoney = money;
                     NetSyncController.Handler().GetStockInfoNow();
                     return true;
                 }

@@ -80,6 +80,7 @@
       <DependentUpon>StockInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIController\DBSyncController.cs" />
+    <Compile Include="UIController\InfoDelegate.cs" />
     <Compile Include="UIController\NetSyncController.cs" />
     <Compile Include="UIController\StockStateBoxController.cs" />
     <Compile Include="UIController\UserPanelController.cs" />
@@ -181,7 +182,7 @@
   <ItemGroup>
     <Resource Include="Resources\close.png" />
     <Resource Include="Resources\deallist.png" />
-    <Resource Include="Resources\min.png" />
+    <Resource Include="Resources\add.png" />
     <Resource Include="Resources\openexcel.png" />
     <Resource Include="Resources\structure.png" />
     <Resource Include="Resources\yield.png" />
@@ -189,7 +190,9 @@
   <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\min.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

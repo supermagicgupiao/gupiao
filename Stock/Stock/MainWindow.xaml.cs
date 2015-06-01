@@ -33,20 +33,12 @@ namespace Stock
     {
         public MainWindow()
         {
-            Test();
             InitializeComponent();
-            if (principal == 0)
-                this.Close();
         }
         public static double principal;
         public static double price = 0;
         public static double upwin = 0;
         public static double daywin = 0;
-        private void Test()
-        {
-            UserPanelController UPC = UserPanelController.Create();
-            Adapter.ErrorAdapter.Show(NetState.Check("0000001"));
-        }
         private void MainGrid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -111,7 +103,7 @@ namespace Stock
                 List<DealListEntity> DLEL;
                 edc.Open(openFileDialog.FileName, out DLEL);
                 DBSyncController.Handler().DealListAdd(DLEL);
-                StockBox();
+                StockStateBoxController.Handler().StockBoxInit();
             }
             else
             {
@@ -147,16 +139,21 @@ namespace Stock
             //now.IsEnabled = false;
 
             //程序开始准备
-
+            this.Hide();
             StockStateBoxController.Create(ref StockCanvas);
+            DBDelegateBridge.UIMoney uim = new DBDelegateBridge.UIMoney(GetDelegateValues);
+            DBDelegateBridge.UIStockHold uis = new DBDelegateBridge.UIStockHold(StockStateBoxController.Handler().GetDelegateValues);
+            InfoDelegate.SetWin setwin = new InfoDelegate.SetWin(setWin);
+            UserPanelController UPC = UserPanelController.Create(UserSwitch, ref uim, ref uis, ref setwin);
+            Adapter.ErrorAdapter.Show(NetState.Check("0000001"));
+            this.Show();
             //UserPanelController.Create(ref UserPanel);
             //DBSyncController.Handler().SetMoneyDelegate(new DBDataController.ChangeMoney(setPrincipal), new DBDataController.ChangeMoney(setTotal), new DBDataController.ChangeMoney(setNow));
             //MoneyEntity ME;
             //DBSyncController.Handler().MoneyRead(out ME);
             //total.Text = String.Format("{0:F}", ME.total);
-            //now.Text = String.Format("{0:F}", ME.now);
-                     
-            StockBox();
+            //now.Text = String.Format("{0:F}", ME.now);    
+            //StockBox();
         }
 
         public void setPrincipal(double money)
@@ -175,6 +172,11 @@ namespace Stock
             setstate1();
             setstate2();
         }
+        public void setWin(double money)
+        {
+            win = money;
+            setTotal(Convert.ToDouble(now.Text) + win);
+        }
         private void setstate1()
         {
             state1.Text = Adapter.DataAdapter.RealTwo(Convert.ToDouble(total.Text) - principal);
@@ -183,20 +185,27 @@ namespace Stock
         {
             state2.Text = Adapter.DataAdapter.RealTwo((Convert.ToDouble(total.Text) - principal) / principal * 100) + "%";
         }
+        private double win = 0;
 
-
-        private void StockBox()
+        private void GetDelegateValues(MoneyEntity ME)
         {
-            StockStateBox.pre = null;
-            StockCanvas.Children.Clear();
-            List<StockHoldEntity> SHEL;
-            DBSyncController.Handler().StockHoldReadAll(out SHEL);
-            foreach (StockHoldEntity SHE in SHEL)
-            {
-                StockStateBoxController.Handler().Add(SHE.id, SHE.name, SHE.hold, SHE.money);
-            }
-            NetSyncController.Handler().StartRefresh();
+            setPrincipal(ME.principal);
+            setTotal(ME.now + win);
+            setNow(ME.now);
         }
+
+        //private void StockBox()
+        //{
+        //    StockStateBox.pre = null;
+        //    StockCanvas.Children.Clear();
+        //    List<StockHoldEntity> SHEL;
+        //    DBSyncController.Handler().StockHoldReadAll(out SHEL);
+        //    foreach (StockHoldEntity SHE in SHEL)
+        //    {
+        //        StockStateBoxController.Handler().Add(SHE.id, SHE.name, SHE.hold, SHE.money);
+        //    }
+        //    NetSyncController.Handler().StartRefresh();
+        //}
 
         private Timer InfoShowTimer;
         private bool flag;
@@ -284,21 +293,27 @@ namespace Stock
             int d = e.Delta;
             if (d > 0)
             {
-                if (((StockStateBox)StockCanvas.Children[0]).Margin.Top >= 5)
-                    return;
-                foreach (StockStateBox ui in StockCanvas.Children)
+                if (StockCanvas.Children.Count > 0)
                 {
-                    ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
+                    if (((StockStateBox)StockCanvas.Children[0]).Margin.Top >= 5)
+                        return;
+                    foreach (StockStateBox ui in StockCanvas.Children)
+                    {
+                        ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
+                    }
                 }
             }
             if (d < 0)
             {
-                StockStateBox ssb = (StockStateBox)StockCanvas.Children[StockCanvas.Children.Count - 1];
-                if (ssb.Margin.Top + ssb.Height <= StockCanvas.Height) 
-                    return;
-                foreach (StockStateBox ui in StockCanvas.Children)
+                if (StockCanvas.Children.Count > 0)
                 {
-                    ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
+                    StockStateBox ssb = (StockStateBox)StockCanvas.Children[StockCanvas.Children.Count - 1];
+                    if (ssb.Margin.Top + ssb.Height <= StockCanvas.Height)
+                        return;
+                    foreach (StockStateBox ui in StockCanvas.Children)
+                    {
+                        ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
+                    }
                 }
             }
         }
@@ -309,6 +324,18 @@ namespace Stock
             {
                 MessageBox.Show(NetDataController.log);
             }
+        }
+
+
+        private void Add_User(object sender, MouseButtonEventArgs e)
+        {
+            InputMoney dlg = new InputMoney();
+            dlg.ShowDialog();
+            if (dlg.m == 0)
+            {
+                return;
+            }
+            UserPanelController.Handler().AddUser(dlg.n, dlg.m);
         }
     }
 }

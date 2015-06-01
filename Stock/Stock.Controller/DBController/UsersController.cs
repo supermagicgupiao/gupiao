@@ -33,6 +33,19 @@ namespace Stock.Controller.DBController
             dbPath = path;
             DBE = Check();
         }
+        //获取用户名列表
+        public List<string> GetUserList()
+        {
+            return userdict.Select(x => x.Key).ToList();
+        }
+        //获取用户对应控制器
+        public DBDataController GetUserControler(string name)
+        {
+            if (!userdict.ContainsKey(name))
+                return null;
+            return userdict[name];
+        }
+
         //增加新的users
         public DB_ERROR AddNewUser(string name, double principal)
         {
@@ -40,6 +53,8 @@ namespace Stock.Controller.DBController
         }
         public DB_ERROR AddNewUser(string name, string path, double principal)
         {
+            if (name == "" || path == "")
+                return DB_ERROR.DB_DATA_CANT_USE;
             if (userdict.ContainsKey(name))
                 return DB_ERROR.DB_USER_TABLE_EXISTS;
             DBDataController DBC = new DBDataController(name, path);
@@ -72,10 +87,6 @@ namespace Stock.Controller.DBController
             DB_ERROR DBE = DBC.GetLastError();
             if (DBE == DB_ERROR.DB_OK)
             {
-                UsersEntity UE;
-                UE.name = name;
-                UE.path = dbPath;
-                users.Insert(UE);
                 userdict.Add(name, DBC);
                 return DB_ERROR.DB_OK;
             }

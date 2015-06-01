@@ -125,6 +125,11 @@ namespace Stock.Controller.DBController
             if (stockholdDelegate != null)
                 stockholdDelegate(SHE);
         }
+        public void TriggerDelegate()
+        {
+            if (moneyDelegate != null)
+                moneyDelegate(money);
+        }
 
         //读取全部的交易记录
         public void DealListReadAll(out List<DealListEntity> DLEL)
@@ -164,9 +169,9 @@ namespace Stock.Controller.DBController
             PrincipalEntity PE = new PrincipalEntity();
             PE.money = m.ToString();
             principal.Insert(PE);
-            //总资产与现金创建
+            //本金与现金创建
+            money.principal = m;
             money.now = m;
-            money.total = m;
             //交易记录创建持股表
             StockHold_Init();
         }
@@ -190,7 +195,6 @@ namespace Stock.Controller.DBController
         {
             PrincipalWrite(PrincipalRead() + m);
             MoneyChangeNow(m);
-            MoneyChangeTotal(m);
             MoneyReadSet();
         }
         //保存日志
@@ -223,11 +227,6 @@ namespace Stock.Controller.DBController
         {
             money.principal += m;
         }
-        private void MoneyChangeTotal(double m)
-        {
-            money.total += m;
-        }
-
 
         //获取最后错误
         public DB_ERROR GetLastError()
@@ -285,10 +284,10 @@ namespace Stock.Controller.DBController
                 principal.Select(out PE);//本金表检测数据是否存在
                 if (PE.money == null)
                     return DB_ERROR.DB_DATA_NOT_EXISTS;//数据不存在
-                //内存建立总资产和现金
+                //内存建立本金和现金
                 double m = Convert.ToDouble(PE.money);
+                money.principal = m;
                 money.now = m;
-                money.total = m;
 
                 //交易记录创建持股表
                 StockHold_Init();
@@ -319,27 +318,32 @@ namespace Stock.Controller.DBController
             if (DLE.type == "买入")
             {
                 SHE.hold = DLE.number;
-                MoneyChangeNow(-(DLE.number * DLE.money));
+                double c = -(DLE.number * DLE.money);
+                MoneyChangeNow(c);
             }
             else if (DLE.type == "卖出")
             {
                 SHE.hold = -DLE.number;
-                MoneyChangeNow(DLE.number * DLE.money);
+                double c = DLE.number * DLE.money;
+                MoneyChangeNow(c);
             }
             else if (DLE.type == "卖空")
             {
                 SHE.hold = DLE.number;
-                MoneyChangeNow(-(DLE.number * DLE.money));
+                double c = -(DLE.number * DLE.money);
+                MoneyChangeNow(c);
             }
             else if (DLE.type == "补仓")
             {
                 SHE.hold = -DLE.number;
-                MoneyChangeNow(DLE.number * DLE.money);
+                double c = DLE.number * DLE.money;
+                MoneyChangeNow(c);
             }
             else
             {
                 SHE.hold = DLE.number;
-                MoneyChangeNow(-(DLE.number * DLE.money));
+                double c = -(DLE.number * DLE.money);
+                MoneyChangeNow(c);
             }
             SHE.money = Convert.ToDouble(DLE.money) * Convert.ToDouble(SHE.hold);
             StockHoldEntity SHE_=new StockHoldEntity();
@@ -369,6 +373,5 @@ namespace Stock.Controller.DBController
     {
         public double principal;
         public double now;
-        public double total;
     }
 }
