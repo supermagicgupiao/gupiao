@@ -67,6 +67,7 @@
     <Compile Include="NetController\NetDataController.cs" />
     <Compile Include="NetController\NetState.cs" />
     <Compile Include="NetController\StockAPI\Netease.cs" />
+    <Compile Include="NetController\StockAPI\Sina.cs" />
     <Compile Include="NetController\StockInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

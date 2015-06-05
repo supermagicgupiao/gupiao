@@ -2,11 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <LinearGradientBrush x:Key="MainColorBrush" StartPoint="0,0" EndPoint="1,1" x:Shared="false">
-        <GradientStop Color="LightSkyBlue" Offset="0"/>
-        <GradientStop Color="PowderBlue" Offset="0.25"/>
-        <GradientStop Color="LightSkyBlue" Offset="0.5"/>
-        <GradientStop Color="PowderBlue" Offset="0.75"/>
-        <GradientStop Color="LightSkyBlue" Offset="1"/>
+        <GradientStop Color="#E2ADC8DF" Offset="0"/>
+        <GradientStop Color="#FFB1CBE3" Offset="0.25"/>
+        <GradientStop Color="#E2ADC8DF" Offset="0.5"/>
+        <GradientStop Color="#FFB1CBE3" Offset="0.75"/>
+        <GradientStop Color="#E2ADC8DF" Offset="1"/>
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="BoxColor" Color="AliceBlue" x:Shared="false"/>

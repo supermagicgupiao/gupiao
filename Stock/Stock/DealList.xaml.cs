@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 
 using Stock.Controller.DBController;
 using Stock.Controller.DBController.DBTable;
+using Stock.UIController;
 
 namespace Stock
 {
@@ -24,6 +25,7 @@ namespace Stock
         public DealList()
         {
             InitializeComponent();
+            user.Content = "(" + UserPanelController.Handler().name + ")";
         }
         public List<DealListEntity> DLEL;
         private void Grid_MouseMove(object sender, MouseEventArgs e)
@@ -67,6 +69,15 @@ namespace Stock
                 DList.Items.Add(data);
             }
             DList.UpdateLayout();
+        }
+
+        private void DList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            object o = DList.SelectedItem;
+            if (o == null)
+                return;
+            ItemData item = o as ItemData;
+            MessageBox.Show("暂停未提供修改功能!");
         }
     }
     public class ItemData

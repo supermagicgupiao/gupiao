@@ -121,6 +121,10 @@ namespace Stock.Controller.NetController.StockAPI
                 UpdateLog(id, NET_ERROR.NET_CANT_CONNECT);
                 return NET_ERROR.NET_CANT_CONNECT;//网络错误 无法连接
             }
+            catch
+            {
+                return NET_ERROR.NET_DATA_ERROR;
+            }
             try
             {
                 image = Image.FromStream(stm);

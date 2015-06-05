@@ -19,12 +19,11 @@ namespace Stock.UIController
         private InfoDelegate.SetWin setWin;
         private static UserPanelController UPC;
         private UsersController usersController;
-        private ComboBox cb;
         private DBDelegateBridge.UIMoney uim;
         private DBDelegateBridge.UIStockHold uis;
-        private UserPanelController(ComboBox cb, ref DBDelegateBridge.UIMoney uim, ref DBDelegateBridge.UIStockHold uis, ref InfoDelegate.SetWin setWin)
+        public string name;
+        private UserPanelController(ref DBDelegateBridge.UIMoney uim, ref DBDelegateBridge.UIStockHold uis, ref InfoDelegate.SetWin setWin)
         {
-            this.cb = cb;
             this.uim = uim;
             this.uis = uis;
             this.setWin = setWin;
@@ -48,18 +47,13 @@ namespace Stock.UIController
                 return;
             }
             List<string> users = usersController.GetUserList();
+            UserBoxController.Handler().setEventHandler(UserChange);
             foreach (string name in users)
             {
                 //选择
-                ComboBoxItem cbi = new ComboBoxItem();
-                cbi.Content = name;
-                cb.Items.Add(cbi);
-                //canvas
-                //CanvasDict.Add(name, new List<StockStateBox>());
-                //NetDict.Add(name, new NetDataController());
+                UserBoxController.Handler().Add(name, usersController.GetUserControler(name).PrincipalRead());
             }
-            cb.SelectionChanged += UserChange;
-            cb.SelectedIndex = 0;
+            UserChange(users.First());
         }
         private void setCanvas(string name)
         {
@@ -134,10 +128,34 @@ namespace Stock.UIController
         }
         private void UserChange(object sender, EventArgs e)
         {
-            ComboBoxItem cbi = (ComboBoxItem)((ComboBox)sender).SelectedValue;
-            string name = cbi.Content.ToString();
+            UserBox ub = (UserBox)sender;
+            string name = ub.name.Content.ToString();
+            if (this.name == name)
+                return;
+            if (name == "添加账户")
+            {
+                InputMoney dlg = new InputMoney();
+                dlg.ShowDialog();
+                if (dlg.m == 0)
+                {
+                    return;
+                }
+                name = dlg.n;
+                if (usersController.GetUserControler(name) == null)
+                    UserPanelController.Handler().AddUser(dlg.n, dlg.m);
+                else
+                {
+                    MessageBox.Show("账户名已存在");
+                    return;
+                }
+            }
+            UserChange(name);
+        }
+        private void UserChange(string name)
+        {
+            this.name = name;
             setDBDataController(name);
-            setNetDataController(name); 
+            setNetDataController(name);
             setInfoDelegate(name);
             setCanvas(name);
         }
@@ -147,13 +165,13 @@ namespace Stock.UIController
             usersController.AddNewUser(name, m);
             ComboBoxItem cbi = new ComboBoxItem();
             cbi.Content = name;
-            cb.Items.Add(cbi);
+            UserBoxController.Handler().Add(name, m);
         }
-        public static UserPanelController Create(ComboBox cb, ref DBDelegateBridge.UIMoney uim, ref DBDelegateBridge.UIStockHold uis, ref InfoDelegate.SetWin setWin)
+        public static UserPanelController Create(ref DBDelegateBridge.UIMoney uim, ref DBDelegateBridge.UIStockHold uis, ref InfoDelegate.SetWin setWin)
         {
             if (UPC == null)
             {
-                UPC = new UserPanelController(cb, ref uim, ref uis, ref setWin);
+                UPC = new UserPanelController(ref uim, ref uis, ref setWin);
                 return UPC;
             }
             else

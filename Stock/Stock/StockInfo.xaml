@@ -32,7 +32,7 @@
             <Border Height="360" Width="540" Margin="0,130,0,0" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="1">
                 <Image x:Name="k"/>
             </Border>
-            <Button Content="分时" HorizontalAlignment="Left" Margin="26,509,0,10" VerticalAlignment="Top" Width="74" Click="TIME_Click"/>
+            <Button Content="分时" HorizontalAlignment="Left" Margin="26,509,0,0" VerticalAlignment="Top" Width="74" Click="TIME_Click"/>
             <Button Content="周线" HorizontalAlignment="Left" Margin="99,509,0,0" VerticalAlignment="Top" Width="74" Click="WEEK_Click"/>
             <Button Content="月线" HorizontalAlignment="Left" Margin="172,509,0,0" VerticalAlignment="Top" Width="74" Click="MONTH_Click"/>
             <Button Content="30天" HorizontalAlignment="Left" Margin="245,509,0,0" VerticalAlignment="Top" Width="74" Click="DAY30_Click"/>

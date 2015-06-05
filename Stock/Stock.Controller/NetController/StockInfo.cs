@@ -23,15 +23,15 @@ namespace Stock.Controller.NetController.StockAPI
             }
             if (e == NET_ERROR.NET_CANT_CONNECT)
             {
-                log.Add(dt.ToLongTimeString().ToString() + stockid + ":NET_CANT_CONNECT");
+                log.Add(dt.ToLongTimeString().ToString() + ":" + stockid + " NET_CANT_CONNECT");
             }
             else if (e == NET_ERROR.NET_JSON_NOT_EXISTS)
             {
-                log.Add(dt.ToLongTimeString().ToString() + stockid + ":NET_JSON_NOT_EXISTS");
+                log.Add(dt.ToLongTimeString().ToString() + ":" + stockid + " NET_JSON_NOT_EXISTS");
             }
             else if (e == NET_ERROR.NET_REQ_ERROR)
             {
-                log.Add(dt.ToLongTimeString().ToString() + stockid + ":NET_REQ_ERROR");
+                log.Add(dt.ToLongTimeString().ToString() + ":" + stockid + " NET_REQ_ERROR");
             }
         }
     }

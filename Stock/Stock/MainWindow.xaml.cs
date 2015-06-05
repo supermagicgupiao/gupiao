@@ -134,17 +134,19 @@ namespace Stock
         {
             InfoShowTimer = new Timer(ShowBoxCheck, null, 0, 2 * 1000);
             InfoShowTimer.Change(-1, 0);
-            dlg = new InfoShow();
+            infoshow = new InfoShow();
+            UserCanvas.Visibility = Visibility.Hidden;
             total.IsEnabled = false;
             //now.IsEnabled = false;
 
             //程序开始准备
             this.Hide();
             StockStateBoxController.Create(ref StockCanvas);
+            UserBoxController.Create(ref UserCanvas);
             DBDelegateBridge.UIMoney uim = new DBDelegateBridge.UIMoney(GetDelegateValues);
             DBDelegateBridge.UIStockHold uis = new DBDelegateBridge.UIStockHold(StockStateBoxController.Handler().GetDelegateValues);
             InfoDelegate.SetWin setwin = new InfoDelegate.SetWin(setWin);
-            UserPanelController UPC = UserPanelController.Create(UserSwitch, ref uim, ref uis, ref setwin);
+            UserPanelController UPC = UserPanelController.Create(ref uim, ref uis, ref setwin);
             Adapter.ErrorAdapter.Show(NetState.Check("0000001"));
             this.Show();
             //UserPanelController.Create(ref UserPanel);
@@ -154,6 +156,10 @@ namespace Stock
             //total.Text = String.Format("{0:F}", ME.total);
             //now.Text = String.Format("{0:F}", ME.now);    
             //StockBox();
+        }
+        public void setUser(string name)
+        {
+            user.Content = "(" + name + ")";
         }
 
         public void setPrincipal(double money)
@@ -179,16 +185,27 @@ namespace Stock
         }
         private void setstate1()
         {
-            state1.Text = Adapter.DataAdapter.RealTwo(Convert.ToDouble(total.Text) - principal);
+            double c = Convert.ToDouble(total.Text) - principal;
+            if (c > 0)
+                state1.Foreground = new SolidColorBrush(Color.FromRgb(200, 0, 0));
+            else
+                state1.Foreground = new SolidColorBrush(Color.FromRgb(0, 100, 0));
+            state1.Text = Adapter.DataAdapter.RealTwo(c);
         }
         private void setstate2()
         {
-            state2.Text = Adapter.DataAdapter.RealTwo((Convert.ToDouble(total.Text) - principal) / principal * 100) + "%";
+            double c = (Convert.ToDouble(total.Text) - principal) / principal * 100;
+            if (c > 0)
+                state2.Foreground = new SolidColorBrush(Color.FromRgb(200, 0, 0));
+            else
+                state2.Foreground = new SolidColorBrush(Color.FromRgb(0, 100, 0));
+            state2.Text = Adapter.DataAdapter.RealTwo(c) + "%";
         }
         private double win = 0;
 
         private void GetDelegateValues(MoneyEntity ME)
         {
+            setUser(ME.name);
             setPrincipal(ME.principal);
             setTotal(ME.now + win);
             setNow(ME.now);
@@ -209,7 +226,7 @@ namespace Stock
 
         private Timer InfoShowTimer;
         private bool flag;
-        private InfoShow dlg;
+        private InfoShow infoshow;
         private delegate void DelegateShowInfoBox();
         private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -220,7 +237,7 @@ namespace Stock
 
         private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
         {
-            dlg.Hide();
+            infoshow.Hide();
             flag = false;
         }
         private void ShowBoxCheck(object obj)
@@ -233,17 +250,17 @@ namespace Stock
         }
         private void ShowInfoBox()
         {
-            dlg.WindowStartupLocation = WindowStartupLocation.Manual;
-            dlg.Left = this.Left + this.ActualWidth + 5;
-            dlg.Top = this.Top;
-            dlg.principal.Text = Adapter.DataAdapter.RealTwo(principal);
-            dlg.total.Text = total.Text;
-            dlg.now.Text = now.Text;
-            dlg.win.Text = state1.Text;
-            dlg.upwin.Text = Adapter.DataAdapter.RealTwo(upwin);
-            dlg.daywin.Text = Adapter.DataAdapter.RealTwo(daywin);
-            dlg.price.Text = Adapter.DataAdapter.RealTwo(price);
-            dlg.Show();
+            infoshow.WindowStartupLocation = WindowStartupLocation.Manual;
+            infoshow.Left = this.Left + this.ActualWidth + 5;
+            infoshow.Top = this.Top;
+            infoshow.principal.Text = Adapter.DataAdapter.RealTwo(principal);
+            infoshow.total.Text = total.Text;
+            infoshow.now.Text = now.Text;
+            infoshow.win.Text = state1.Text;
+            infoshow.upwin.Text = Adapter.DataAdapter.RealTwo(upwin);
+            infoshow.daywin.Text = Adapter.DataAdapter.RealTwo(daywin);
+            infoshow.price.Text = Adapter.DataAdapter.RealTwo(price);
+            infoshow.Show();
         }
 
         private double mark;
@@ -291,15 +308,38 @@ namespace Stock
         private void StockCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             int d = e.Delta;
+            StockStateBox ssb;
+            if (StockCanvas.Children.Count == 0)
+                return;
+            else
+            {
+                ssb = (StockStateBox)StockCanvas.Children[0];
+                if ((StockCanvas.ActualHeight - 10) / (ssb.ActualHeight + 10) > StockCanvas.Children.Count) 
+                    return;
+            }
             if (d > 0)
             {
                 if (StockCanvas.Children.Count > 0)
                 {
-                    if (((StockStateBox)StockCanvas.Children[0]).Margin.Top >= 5)
-                        return;
-                    foreach (StockStateBox ui in StockCanvas.Children)
+                    if (ssb.Margin.Top == 5)
                     {
-                        ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
+                        return;
+                    }
+                    else if (ssb.Margin.Top + 20 * d / 100 > 5)
+                    {
+                        double c = 5 - ssb.Margin.Top;
+                        foreach (StockStateBox ui in StockCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + c, 0, 0);
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        foreach (StockStateBox ui in StockCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 100, 0, 0);
+                        }
                     }
                 }
             }
@@ -307,12 +347,25 @@ namespace Stock
             {
                 if (StockCanvas.Children.Count > 0)
                 {
-                    StockStateBox ssb = (StockStateBox)StockCanvas.Children[StockCanvas.Children.Count - 1];
-                    if (ssb.Margin.Top + ssb.Height <= StockCanvas.Height)
+                    ssb = (StockStateBox)StockCanvas.Children[StockCanvas.Children.Count - 1];
+                    double h = ssb.Margin.Top + ssb.Height;
+                    if (h == StockCanvas.Height - 5)
                         return;
-                    foreach (StockStateBox ui in StockCanvas.Children)
+                    else if (h + 20 * d / 100 < StockCanvas.Height - 5)
                     {
-                        ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 120, 0, 0);
+                        double c = StockCanvas.Height - 5 - h;
+                        foreach (StockStateBox ui in StockCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + c, 0, 0);
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        foreach (StockStateBox ui in StockCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 100, 0, 0);
+                        }
                     }
                 }
             }
@@ -322,20 +375,90 @@ namespace Stock
         {
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                MessageBox.Show(NetDataController.log);
+                MessageBox.Show(NetDataController.GetLog());
             }
         }
 
 
-        private void Add_User(object sender, MouseButtonEventArgs e)
+        private bool UserSwitchFlag = true;
+        private void Switch_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            InputMoney dlg = new InputMoney();
-            dlg.ShowDialog();
-            if (dlg.m == 0)
-            {
+            UserSwitchFlag = !UserSwitchFlag;
+            if (UserSwitchFlag) UserCanvas.Visibility = Visibility.Hidden;
+            else UserCanvas.Visibility = Visibility.Visible;
+        }
+
+        private void UserCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            int d = e.Delta;
+            UserBox ub;
+            if (UserCanvas.Children.Count <= 1)
                 return;
+            else
+            {
+                ub = (UserBox)UserCanvas.Children[0];
+                if ((UserCanvas.ActualHeight - 10) / (ub.ActualHeight + 5) > UserCanvas.Children.Count) 
+                    return;
             }
-            UserPanelController.Handler().AddUser(dlg.n, dlg.m);
+            if (d > 0)
+            {
+                if (UserCanvas.Children.Count > 1)
+                {
+                    ub = (UserBox)UserCanvas.Children[1];
+                    if (ub.Margin.Top == 5)
+                    {
+                        return;
+                    }
+                    else if (ub.Margin.Top + 20 * d / 100 > 5)
+                    {
+                        double c = 5 - ub.Margin.Top;
+                        foreach (UserBox ui in UserCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + c, 0, 0);
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        foreach (UserBox ui in UserCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 100, 0, 0);
+                        }
+                    }
+                }
+            }
+            if (d < 0)
+            {
+                if (UserCanvas.Children.Count > 0)
+                {
+                    ub = (UserBox)UserCanvas.Children[0];
+                    double h = ub.Margin.Top + ub.Height;
+                    if (h == UserCanvas.Height - 5)
+                        return;
+                    else if (h + 20 * d / 100 < UserCanvas.Height - 5)
+                    {
+                        double c = UserCanvas.Height - 5 - h;
+                        foreach (UserBox ui in UserCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + c, 0, 0);
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        foreach (UserBox ui in UserCanvas.Children)
+                        {
+                            ui.Margin = new Thickness(5, ui.Margin.Top + 20 * d / 100, 0, 0);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Setting_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Setting dlg = new Setting();
+            dlg.ShowDialog();
         }
     }
 }

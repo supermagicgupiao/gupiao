@@ -34,6 +34,7 @@ namespace Stock
         {
             InitializeComponent();
             this.StockList.ItemsSource = list;
+            user.Content = "(" + UserPanelController.Handler().name + ")";
         }
         private void Min_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -124,6 +125,12 @@ namespace Stock
 
         private void ShowImage(object sender, RoutedEventArgs e)
         {
+            if (user.Content.ToString() != "(" + DBSyncController.Handler().GetUserName() + ")")
+            {
+                MessageBox.Show("用户已改变！");
+                this.Close();
+                return;
+            }
             if(select.Count == 0)
             {
                 MessageBox.Show("请选择股票");
@@ -185,7 +192,10 @@ namespace Stock
                         }
                         else
                         {
-                            index += 1;
+                            while (index + 1 < HSHEL.Count && HSHEL[index].date == HSHEL[index + 1].date)
+                                index++;
+                            if (index < HSHEL.Count - 1)
+                                index++;
                             DDE.money = HSHEL[index].number * money[usable];
                         }
                     }

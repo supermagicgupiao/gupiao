@@ -30,6 +30,7 @@ namespace Stock
         public Yield()
         {
             InitializeComponent();
+            user.Content = "(" + UserPanelController.Handler().name + ")";
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
@@ -59,17 +60,31 @@ namespace Stock
             yield.Source = Adapter.ImageAdapter.ImageConvert(DDC.GetImage());
             List<StockHoldEntity> SHEL;
             DBSyncController.Handler().StockHoldReadAll(out SHEL);
+            if (SHEL.Count == 0)
+            {
+                MessageBox.Show("无任何股票");
+                this.Close();
+                return;
+            }
             idl = SHEL.Select(s => s.id).ToList();
             NetState.IdConvert(ref idl);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (user.Content.ToString() != "(" + DBSyncController.Handler().GetUserName() + ")")  
+            {
+                MessageBox.Show("用户已改变");
+                this.Close();
+                return;
+            }
             DateTime date;
             int days;
             try
             {
                 date = Convert.ToDateTime(StartDate.Text);
+                if (date > DateTime.Now)
+                    throw new Exception();
                 days = Convert.ToInt32(DateLong.Text);
             }
             catch (Exception)
@@ -83,7 +98,7 @@ namespace Stock
             td.Width = (int)yield.Width;
             td.Height = (int)yield.Height;
 
-//            ThreadImageGet(td);
+            ThreadImageGet(td);
 
             Thread get = new Thread(new ParameterizedThreadStart(ThreadImageGet));
             get.Start(td);
@@ -93,23 +108,23 @@ namespace Stock
             ThreadDate td = (ThreadDate)data;
             List<HistoryStockHoldEntity> HSHELNoSort;
             DBSyncController.Handler().HistoryStockHoldReadByRange(td.date, td.days, out HSHELNoSort);
-            Dictionary<string, double> dict = new Dictionary<string, double>();
-            Dictionary<string, double> dict_ = new Dictionary<string, double>();
-            foreach (HistoryStockHoldEntity HSHE in HSHELNoSort)
+
+            Dictionary<string, int> hold = new Dictionary<string, int>();
+            List<HistoryStockHoldEntity> HSHEL = HSHELNoSort.OrderBy(g => g.date).ToList();
+            double pri = DBSyncController.Handler().PrincipalRead();
+            double now = pri;
+            foreach (HistoryStockHoldEntity HSHE in HSHEL)
             {
-                if (!dict.ContainsKey(HSHE.id))
+                if (!hold.ContainsKey(HSHE.id))
                 {
-                    dict.Add(HSHE.id, 0);
-                    dict_.Add(HSHE.id, 0);
+                    hold.Add(HSHE.id, 0);
                 }
             }
-            List<HistoryStockHoldEntity> HSHEL = HSHELNoSort.OrderBy(g => g.date).ToList();
-            
-            Dictionary<string,Dictionary<DateTime,double>> moneydict = new Dictionary<string,Dictionary<DateTime,double>>();
 
+            Dictionary<string, Dictionary<DateTime, double>> moneydict = new Dictionary<string, Dictionary<DateTime, double>>();
             foreach (string x in idl)
             {
-                Dictionary<DateTime,double> money = new Dictionary<DateTime,double>();
+                Dictionary<DateTime, double> money = new Dictionary<DateTime, double>();
                 NetDataController.HistoryMoney(x, td.date, td.days, out money);
                 moneydict.Add(x, money);
             }
@@ -117,31 +132,32 @@ namespace Stock
             List<DrawDataEntity> DDEL = new List<DrawDataEntity>();
             DrawDataEntity DDE = new DrawDataEntity();
             int index = 0;
-            double fixedmoney = MainWindow.principal;
+            DateTime dt = td.date;
+            if (dt.DayOfWeek == DayOfWeek.Saturday) dt = dt.AddDays(2);
+            if (dt.DayOfWeek == DayOfWeek.Sunday) dt = dt.AddDays(1);
             for (int i = 0; i < td.days; i++)
             {
-                double money = 0;
-                Dictionary<string, double> cdict = new Dictionary<string, double>(dict_);
-                DateTime dt = td.date.AddDays(i);
+                dt = dt.AddDays(1);
+                if (dt > DateTime.Now)
+                {
+                    break;
+                }
                 if (!moneydict.First().Value.ContainsKey(dt))
                 {
-                    foreach(var x in moneydict)
+                    foreach (var x in moneydict)
                     {
                         x.Value.Add(dt, x.Value[dt.AddDays(-1)]);
                     }
                 }
                 DDE.date = dt;
-                if (dt > DateTime.Now)
-                {
-                    break;
-                }
                 while (index < HSHEL.Count - 1 && HSHEL[index].date <= dt)
                 {
-                    dict[HSHEL[index].id] += HSHEL[index].change;
-                    cdict[HSHEL[index].id] += -HSHEL[index].change * HSHEL[index].money;
+                    hold[HSHEL[index].id] += HSHEL[index].change;
+                    now += -HSHEL[index].change * HSHEL[index].money;
                     index++;
                 }
-                foreach (var x in dict)
+                double money = 0;
+                foreach (var x in hold)
                 {
                     if (x.Value != 0)
                     {
@@ -149,12 +165,10 @@ namespace Stock
                         if (id == null)
                             continue;
                         double m = moneydict[id][dt];
-                        fixedmoney += cdict[x.Key];
-                        money += m * x.Value;
+                        money += x.Value * m;
                     }
                 }
-                money += fixedmoney;
-                DDE.money = (money - MainWindow.principal) * 100 / MainWindow.principal;
+                DDE.money = (money + now - pri) * 100 / pri;
                 DDEL.Add(DDE);
             }
             DrawDataController DDC = new DrawDataController(td.Width, td.Height);
@@ -162,6 +176,84 @@ namespace Stock
             Action<Image, System.Drawing.Bitmap> updateAction = new Action<Image, System.Drawing.Bitmap>(UpdateImage);
             yield.Dispatcher.BeginInvoke(updateAction, yield, DDC.GetImage());
         }
+
+
+
+
+        //private void ImageGet(object data)
+        //{
+        //    ThreadDate td = (ThreadDate)data;
+        //    List<HistoryStockHoldEntity> HSHELNoSort;
+        //    DBSyncController.Handler().HistoryStockHoldReadByRange(td.date, td.days, out HSHELNoSort);
+        //    Dictionary<string, double> dict = new Dictionary<string, double>();
+        //    Dictionary<string, double> dict_ = new Dictionary<string, double>();
+        //    foreach (HistoryStockHoldEntity HSHE in HSHELNoSort)
+        //    {
+        //        if (!dict.ContainsKey(HSHE.id))
+        //        {
+        //            dict.Add(HSHE.id, 0);
+        //            dict_.Add(HSHE.id, 0);
+        //        }
+        //    }
+        //    List<HistoryStockHoldEntity> HSHEL = HSHELNoSort.OrderBy(g => g.date).ToList();
+            
+        //    Dictionary<string,Dictionary<DateTime,double>> moneydict = new Dictionary<string,Dictionary<DateTime,double>>();
+
+        //    foreach (string x in idl)
+        //    {
+        //        Dictionary<DateTime,double> money = new Dictionary<DateTime,double>();
+        //        NetDataController.HistoryMoney(x, td.date, td.days, out money);
+        //        moneydict.Add(x, money);
+        //    }
+
+        //    List<DrawDataEntity> DDEL = new List<DrawDataEntity>();
+        //    DrawDataEntity DDE = new DrawDataEntity();
+        //    int index = 0;
+        //    double fixedmoney = MainWindow.principal;
+        //    for (int i = 0; i < td.days; i++)
+        //    {
+        //        double money = 0;
+        //        Dictionary<string, double> cdict = new Dictionary<string, double>(dict_);
+        //        DateTime dt = td.date.AddDays(i);
+        //        if (!moneydict.First().Value.ContainsKey(dt))
+        //        {
+        //            foreach(var x in moneydict)
+        //            {
+        //                x.Value.Add(dt, x.Value[dt.AddDays(-1)]);
+        //            }
+        //        }
+        //        DDE.date = dt;
+        //        if (dt > DateTime.Now)
+        //        {
+        //            break;
+        //        }
+        //        while (index < HSHEL.Count - 1 && HSHEL[index].date <= dt)
+        //        {
+        //            dict[HSHEL[index].id] += HSHEL[index].change;
+        //            cdict[HSHEL[index].id] += -HSHEL[index].change * HSHEL[index].money;
+        //            index++;
+        //        }
+        //        foreach (var x in dict)
+        //        {
+        //            if (x.Value != 0)
+        //            {
+        //                string id = idl.Where(s => s.Substring(1) == x.Key).First();
+        //                if (id == null)
+        //                    continue;
+        //                double m = moneydict[id][dt];
+        //                fixedmoney += cdict[x.Key];
+        //                money += m * x.Value;
+        //            }
+        //        }
+        //        money += fixedmoney;
+        //        DDE.money = (money - MainWindow.principal) * 100 / MainWindow.principal;
+        //        DDEL.Add(DDE);
+        //    }
+        //    DrawDataController DDC = new DrawDataController(td.Width, td.Height);
+        //    DDC.DrawData(DDEL);
+        //    Action<Image, System.Drawing.Bitmap> updateAction = new Action<Image, System.Drawing.Bitmap>(UpdateImage);
+        //    yield.Dispatcher.BeginInvoke(updateAction, yield, DDC.GetImage());
+        //}
         private void UpdateImage(Image yield, System.Drawing.Bitmap bmp)
         {
             yield.Source = Adapter.ImageAdapter.ImageConvert(bmp);

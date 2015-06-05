@@ -93,7 +93,7 @@ namespace Stock.Controller.DBController.DBTable
                     HSHE.date = Convert.ToDateTime(reader.GetValue(1));
                     HSHE.number = Convert.ToInt32(reader.GetValue(2));
                     HSHE.change = Convert.ToInt32(reader.GetValue(3));
-                    HSHE.money = Convert.ToInt32(reader.GetValue(4));
+                    HSHE.money = Convert.ToDouble(reader.GetValue(4));
                     HSHEL.Add(HSHE);
                 }
             }

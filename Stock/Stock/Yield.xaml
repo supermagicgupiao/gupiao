@@ -10,6 +10,7 @@
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="586,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="619,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="收益率" VerticalAlignment="Top" FontSize="18" Height="23" Width="57"/>
+        <Label x:Name="user" Content="(账户)" HorizontalAlignment="Left" Margin="65,10,0,3" FontSize="14" FontWeight="Thin"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="352" Margin="10,10,0,-359" Grid.Row="1" VerticalAlignment="Top" Width="637">
             <Image x:Name="yield" Width="637" Height="352"/>
         </Border>

@@ -36,6 +36,10 @@ namespace Stock.Controller.DBController
 
         //用户名
         private string user;
+        public string GetUserName()
+        {
+            return user;
+        }
 
         ////默认路径数据库
         //public DBDataController()
@@ -58,6 +62,7 @@ namespace Stock.Controller.DBController
         {
             dbPath = path;
             user = name;
+            money.name = name;
             DBE = Check();
             delegateController = new DBDelegateBridge(this);
         }
@@ -129,6 +134,12 @@ namespace Stock.Controller.DBController
         {
             if (moneyDelegate != null)
                 moneyDelegate(money);
+        }
+
+        //读取现金
+        public double NowMoneyRead()
+        {
+            return money.now;
         }
 
         //读取全部的交易记录
@@ -371,6 +382,7 @@ namespace Stock.Controller.DBController
     }
     public struct MoneyEntity
     {
+        public string name;
         public double principal;
         public double now;
     }

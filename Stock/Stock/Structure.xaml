@@ -10,6 +10,7 @@
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="586,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="619,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="持股构成" VerticalAlignment="Top" FontSize="18" Height="23" Width="76"/>
+        <Label x:Name="user" Content="(账户)" HorizontalAlignment="Left" Margin="85,10,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Thin"/>
         <Grid HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="637" Background="White">
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="250" Margin="10,10,0,0" VerticalAlignment="Top" Width="617">
                 <Image x:Name="hold" Height="250" Width="617"/>

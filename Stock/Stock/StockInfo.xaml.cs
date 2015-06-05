@@ -57,12 +57,12 @@ namespace Stock
             high.Dispatcher.BeginInvoke(updateAction, high, SIE.high);
             low.Dispatcher.BeginInvoke(updateAction, low, SIE.low);
             open.Dispatcher.BeginInvoke(updateAction, open, SIE.open);
-            percent.Dispatcher.BeginInvoke(updateAction, percent, Convert.ToString(Convert.ToDouble(SIE.percent) * 100) + "%");
+            percent.Dispatcher.BeginInvoke(updateAction, percent, Adapter.DataAdapter.RealTwo(Convert.ToDouble(SIE.percent) * 100) + "%");
             price.Dispatcher.BeginInvoke(updateAction, price, SIE.price);
             time.Dispatcher.BeginInvoke(updateAction, time, SIE.time);
-            turnover.Dispatcher.BeginInvoke(updateAction, turnover, SIE.turnover);
-            updown.Dispatcher.BeginInvoke(updateAction, updown, SIE.updown);
-            volume.Dispatcher.BeginInvoke(updateAction, volume, SIE.volume);
+            turnover.Dispatcher.BeginInvoke(updateAction, turnover, Adapter.DataAdapter.RealTwo(Convert.ToDouble(SIE.turnover) / 100) + "手");
+            updown.Dispatcher.BeginInvoke(updateAction, updown, Adapter.DataAdapter.RealTwo(Convert.ToDouble(SIE.updown)));
+            volume.Dispatcher.BeginInvoke(updateAction, volume, Adapter.DataAdapter.RealTwo(Convert.ToDouble(SIE.volume) / 10000) + "万");
             yestclose.Dispatcher.BeginInvoke(updateAction, yestclose, SIE.yestclose);
         }
         private void ImageSync(Image image,System.Drawing.Image bimage)
@@ -115,6 +115,7 @@ namespace Stock
 
         private void GetKchart(kchart k)
         {
+            this.k.Source = null;
             NetDataController.backimage bimage = new NetDataController.backimage(UpdataImage);
             NetSyncController.Handler().KchartImageGet(C_StockID, k, bimage);
         }

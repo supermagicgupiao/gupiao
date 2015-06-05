@@ -136,10 +136,13 @@ namespace Stock.Controller.DrawController
             else
                 return;
             double max = 0;
+            double min = 100;
             foreach(DrawDataEntity DDE in DDEL)
             {
                 if (max < DDE.money)
                     max = DDE.money;
+                if (min > DDE.money)
+                    min = DDE.money;
             }
             if (max == 0)
                 return;
@@ -148,12 +151,24 @@ namespace Stock.Controller.DrawController
             for (int i = 0; i < days; i++)
             {
                 p[i].X = bmp.Width * i / days;
-                p[i].Y = dateLine - Convert.ToInt32(h * DDEL[i].money / max);
-            }
-            Brush brush = new SolidBrush(Color.Blue);
+                p[i].Y = dateLine - Convert.ToInt32(h * (DDEL[i].money - min) / (max - min));
+            } 
+            Brush brush = new SolidBrush(Color.Black);
             Pen pen = new Pen(brush);
-            g.DrawLines(pen, p);
             Font font = new Font("Times New Roman", fontSize);
+            if (min < 0)
+            {
+                int k = (int)(h * min / (max - min));
+                g.DrawLine(pen, 0, dateLine + k, bmp.Width, dateLine + k);
+                g.DrawString("0", font, brush, new PointF(0, dateLine + k));
+            }
+            else
+            {
+                g.DrawString(min.ToString(), font, brush, new PointF(0, dateLine - fontSize - 2));
+            }
+            brush = new SolidBrush(Color.Blue);
+            pen = new Pen(brush);
+            g.DrawLines(pen, p);
             brush = new SolidBrush(Color.Red);
             g.DrawString("盈亏:" + (DDEL.Last().money).ToString() + "%", font, brush, new PointF(0, 0));
         }

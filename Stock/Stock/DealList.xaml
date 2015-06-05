@@ -10,7 +10,8 @@
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="632,13,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="665,13,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="交易记录" VerticalAlignment="Top" FontSize="18" Height="23" Width="76"/>
-        <ListView x:Name="DList" Height="352" Margin="10,10,10,-356" Grid.Row="1" VerticalAlignment="Top" ScrollViewer.PanningRatio="1">
+        <Label x:Name="user" Content="(账户)" HorizontalAlignment="Left" Margin="86,10,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Thin"/>
+        <ListView x:Name="DList" Height="352" Margin="10,10,10,-356" Grid.Row="1" VerticalAlignment="Top" ScrollViewer.PanningRatio="1" MouseDoubleClick="DList_MouseDoubleClick">
             <ListView.View>
                 <GridView x:Name="ListView"/>
             </ListView.View>

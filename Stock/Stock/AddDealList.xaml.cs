@@ -26,6 +26,7 @@ namespace Stock
         public AddDealList()
         {
             InitializeComponent();
+            user.Content = "(" + UserPanelController.Handler().name + ")";
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
@@ -58,8 +59,14 @@ namespace Stock
                     throw new Exception();
                 if (type.Text == "买入" || type.Text == "卖空")
                 {
-                    if (Convert.ToInt32(number.Text) % 100 != 0)
+                    int buy = Convert.ToInt32(number.Text);
+                    if (buy % 100 != 0)
                         throw new Exception();
+                    if (buy * Convert.ToDouble(money.Text) > DBSyncController.Handler().NowMoneyRead())
+                    {
+                        MessageBox.Show("现金不足!");
+                        return;
+                    }
                 }
                 else
                 {

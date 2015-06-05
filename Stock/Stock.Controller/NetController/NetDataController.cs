@@ -22,8 +22,6 @@ namespace Stock.Controller.NetController
         private Dictionary<string, sync[]> stockdict = new Dictionary<string, sync[]>();
         //定时器
         private Timer t;
-        //网络连接日志
-        public static string log;
         //不带参数的刷新 五秒一次
         public void StartRefresh()
         {
@@ -138,6 +136,16 @@ namespace Stock.Controller.NetController
             }
             return true;
         }
+
+        //股票获取api
+        private static StockInfo si = new Netease();//网易api
+        public static void ChangeApi(string apiname)
+        {
+            if (apiname == "网易")
+                si = new Netease();
+            else if (apiname == "新浪")
+                si = new Sina();
+        }
         //获取k线图
         public void KchartImageGet(string id, kchart k, backimage bimage)
         {
@@ -151,7 +159,6 @@ namespace Stock.Controller.NetController
         private void ThreadImageGet(object data)
         {
             ImageEntity IE = (ImageEntity)data;
-            StockInfo si = new Netease();
             Image image;
             si.KchartImageGet(IE.id, IE.k, out image);
             IE.bimage(image);
@@ -159,19 +166,16 @@ namespace Stock.Controller.NetController
         //获取历史股票收盘价
         public static void HistoryMoney(string id, DateTime date, int days, out Dictionary<DateTime, double> money)
         {
-            StockInfo si = new Netease();
             si.HistoryMoney(id, date, date.AddDays(days), out money);
         }
         //获取历史股票收盘价
         public static void HistoryMoney(string id, DateTime date, DateTime enddate, out Dictionary<DateTime, double> money)
         {
-            StockInfo si = new Netease();
             si.HistoryMoney(id, date, enddate, out money);
         }
         //获取某天股票收盘价
         public static double HistoryMoney(string id, DateTime date)
         {
-            StockInfo si = new Netease();
             Dictionary<DateTime, double> money;
             si.HistoryMoney(id, date, date, out money);
             if (money.Count > 0)
@@ -185,7 +189,6 @@ namespace Stock.Controller.NetController
             Dictionary<string, sync[]> dict = (Dictionary<string, sync[]>)stock;
             if (dict.Count == 0)//委托字典不为空则联网获取数据
                 return;
-            StockInfo si = new Netease();//使用网易的api
             List<string> id = new List<string>(dict.Keys);//股票编号列表
             Dictionary<string, StockInfoEntity> ds;
             si.StockGet(ref id, out ds);//得到id到股票数据实体的字典
@@ -205,6 +208,16 @@ namespace Stock.Controller.NetController
         public void GetStockInfoNow()
         {
             GetStockInfo(stockdict);
+        }
+
+        public static string GetLog()
+        {
+            string l = "";
+            foreach (string s in StockInfo.log)
+            {
+                l += s + "\n";
+            }
+            return l;
         }
     }
     struct ImageEntity

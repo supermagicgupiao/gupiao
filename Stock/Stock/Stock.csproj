@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Stock.Controller">
-      <HintPath>..\Stock.Controller\bin\Debug\Stock.Controller.dll</HintPath>
+      <HintPath>..\Stock.Controller\bin\Release\Stock.Controller.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -76,6 +76,9 @@
     <Compile Include="InputMoney.xaml.cs">
       <DependentUpon>InputMoney.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Setting.xaml.cs">
+      <DependentUpon>Setting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StockInfo.xaml.cs">
       <DependentUpon>StockInfo.xaml</DependentUpon>
     </Compile>
@@ -83,12 +86,16 @@
     <Compile Include="UIController\InfoDelegate.cs" />
     <Compile Include="UIController\NetSyncController.cs" />
     <Compile Include="UIController\StockStateBoxController.cs" />
+    <Compile Include="UIController\UserBoxController.cs" />
     <Compile Include="UIController\UserPanelController.cs" />
     <Compile Include="UserControl\StockStateBox.xaml.cs">
       <DependentUpon>StockStateBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Structure.xaml.cs">
       <DependentUpon>Structure.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\UserBox.xaml.cs">
+      <DependentUpon>UserBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Yield.xaml.cs">
       <DependentUpon>Yield.xaml</DependentUpon>
@@ -132,6 +139,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Setting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StockInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -141,6 +152,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Structure.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\UserBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,7 +197,7 @@
   <ItemGroup>
     <Resource Include="Resources\close.png" />
     <Resource Include="Resources\deallist.png" />
-    <Resource Include="Resources\add.png" />
+    <Resource Include="Resources\switch.png" />
     <Resource Include="Resources\openexcel.png" />
     <Resource Include="Resources\structure.png" />
     <Resource Include="Resources\yield.png" />
@@ -192,6 +207,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\min.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\setting.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

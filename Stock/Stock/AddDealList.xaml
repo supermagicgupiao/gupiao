@@ -9,7 +9,8 @@
         </Grid.RowDefinitions>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="176,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="209,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="添加交易记录" VerticalAlignment="Top" FontSize="18" Height="23" Width="110"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="添加交易" VerticalAlignment="Top" FontSize="18" Height="23" Width="77"/>
+        <Label x:Name="user" Content="(账户)" HorizontalAlignment="Left" Margin="84,10,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Thin"/>
         <Label Content="名称:" HorizontalAlignment="Left" Margin="10,20,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label Content="编号:" HorizontalAlignment="Left" Margin="10,50,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label Content="日期:" HorizontalAlignment="Left" Margin="10,80,0,0" Grid.Row="1" VerticalAlignment="Top"/>

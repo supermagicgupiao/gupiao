@@ -20,7 +20,7 @@ namespace Stock.UIController
         {
             info.win += e.win;
             info.price += e.price;
-            info.upwin += e.upwin;
+            info.upwin = e.upwin;
             info.daywin += e.daywin;
             setValues();
         }
