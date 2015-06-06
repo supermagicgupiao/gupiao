@@ -84,5 +84,17 @@ namespace Stock
             dlg.StockID = ((StockStateBox)sender).stockid;
             dlg.Show();
         }
+
+        private void UserControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            choose.BorderBrush = Brushes.CadetBlue;
+            choose.BorderThickness = new Thickness(2);
+        }
+
+        private void UserControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            choose.BorderBrush = Brushes.DarkGray;
+            choose.BorderThickness = new Thickness(1);
+        }
     }
 }

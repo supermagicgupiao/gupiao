@@ -77,7 +77,7 @@ namespace Stock
             if (o == null)
                 return;
             ItemData item = o as ItemData;
-            MessageBox.Show("暂停未提供修改功能!");
+            MessageBox.Show("暂时未提供修改功能!");
         }
     }
     public class ItemData

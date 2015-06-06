@@ -45,7 +45,7 @@ namespace Stock.Controller.NetController.StockAPI
                 if (backid[0] == 'h')
                     backid = backid.Replace('h', '0');
                 else if (backid[0] == 'z')
-                    backid = backid.Replace('z', '0');
+                    backid = backid.Replace('z', '1');
                 else
                     continue;
                 str = str.Substring(str.IndexOf("\"") + 1);

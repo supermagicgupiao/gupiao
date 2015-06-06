@@ -137,7 +137,7 @@ namespace Stock
             infoshow = new InfoShow();
             UserCanvas.Visibility = Visibility.Hidden;
             total.IsEnabled = false;
-            //now.IsEnabled = false;
+            now.IsEnabled = false;
 
             //程序开始准备
             this.Hide();
@@ -263,36 +263,36 @@ namespace Stock
             infoshow.Show();
         }
 
-        private double mark;
+        //private double mark;
         private void now_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (now.IsReadOnly == true)
-            {
-                mark = Convert.ToDouble(now.Text.ToString());
-                now.IsReadOnly = false;
-            }
+            //if (now.IsReadOnly == true)
+            //{
+            //    mark = Convert.ToDouble(now.Text.ToString());
+            //    now.IsReadOnly = false;
+            //}
         }
 
         private void now_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (now.IsReadOnly == false)
-            {
-                now.IsReadOnly = true;
-                double o;
-                if (Double.TryParse(now.Text.ToString(), out o))
-                {
-                    double t = Convert.ToDouble(total.Text) + o - mark;
-                    if (t >= 1000000000)
-                    {
-                        now.Text = Adapter.DataAdapter.RealTwo(mark);
-                    }
-                    DBSyncController.Handler().PrincipalChange(o - mark);
-                }
-                else
-                {
-                    now.Text = Adapter.DataAdapter.RealTwo(mark);
-                }
-            }
+            //if (now.IsReadOnly == false)
+            //{
+            //    now.IsReadOnly = true;
+            //    double o;
+            //    if (Double.TryParse(now.Text.ToString(), out o))
+            //    {
+            //        double t = Convert.ToDouble(total.Text) + o - mark;
+            //        if (t >= 1000000000)
+            //        {
+            //            now.Text = Adapter.DataAdapter.RealTwo(mark);
+            //        }
+            //        DBSyncController.Handler().PrincipalChange(o - mark);
+            //    }
+            //    else
+            //    {
+            //        now.Text = Adapter.DataAdapter.RealTwo(mark);
+            //    }
+            //}
         }
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {

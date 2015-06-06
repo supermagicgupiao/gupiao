@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Stock.Controller">
-      <HintPath>..\Stock.Controller\bin\Release\Stock.Controller.dll</HintPath>
+      <HintPath>..\Stock.Controller\bin\Debug\Stock.Controller.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -3,8 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" Width="130" Height="55" Background="{DynamicResource BoxColor}" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave">
-    <Grid>
+             mc:Ignorable="d" Width="130" Height="55" Background="{DynamicResource BoxColor}" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" MouseDoubleClick="UserControl_MouseDoubleClick">
+    <Grid Background="Transparent">
+        <Grid.ContextMenu>
+            <ContextMenu x:Name="cm" StaysOpen="true">
+                <MenuItem x:Name="item" Header="修改本金" Click="MenuItem_Click"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
         <Border x:Name="choose" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Left" Height="55" VerticalAlignment="Top" Width="130"/>
         <Label x:Name="name" Content="用户名" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="24" FontWeight="Light" Foreground="Black"/>
         <Label x:Name="pri" Content="本金:" HorizontalAlignment="Left" Margin="0,32,0,0" VerticalAlignment="Top" FontSize="10" Foreground="Black"/>
