@@ -95,5 +95,12 @@ namespace Stock
             UserPanelController.Handler().DBControllerByName(u).PrincipalChange(im.m - pri);
         }
 
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult res = MessageBox.Show("是否删除账户:" + name.Content.ToString(), "删除账户", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            if (res == MessageBoxResult.Yes)
+                UserPanelController.Handler().DelUser(name.Content.ToString());
+        }
+
     }
 }

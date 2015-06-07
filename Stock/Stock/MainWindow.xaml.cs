@@ -500,5 +500,6 @@ namespace Stock
                 Search.Focus();
             }
         }
+
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Stock.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="677" Width="450" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" Background="Transparent" AllowsTransparency="True" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
+        Title="MainWindow" Height="677" Width="450" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" Background="Transparent" AllowsTransparency="True" Loaded="Window_Loaded" KeyDown="Window_KeyDown" ResizeMode="NoResize">
     <Canvas>
         <Grid x:Name="MainGrid" Height="677" Width="300" Margin="150,0,0,0" Background="{DynamicResource MainColorBrush}" MouseMove="MainGrid_MouseMove" MouseDown="MainGrid_MouseDown" MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
             <Grid.RowDefinitions>

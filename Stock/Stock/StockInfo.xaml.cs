@@ -80,8 +80,17 @@ namespace Stock
         public string StockID;
         public string C_StockID;
         public string StockName;
+        private static List<string> stockList = new List<string>();
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (stockList.Contains(StockID))
+            {
+                MessageBox.Show("已经打开了一个股票编号为:" + StockID + "的窗口\n请勿重复开启");
+                this.Close();
+                return;
+            }
+            else
+                stockList.Add(StockID);
             string S_StockID;
             if (NetState.CheckName("0" + StockID, out StockName) == NET_ERROR.NET_REQ_OK)
             {
@@ -111,6 +120,7 @@ namespace Stock
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             NetSyncController.Handler().StockTempRefreshDelete(C_StockID);
+            stockList.Remove(StockID);
         }
 
         private void GetKchart(kchart k)
@@ -166,6 +176,7 @@ namespace Stock
         private void ShowDealList_Click(object sender, RoutedEventArgs e)
         {
             DealList dl = new DealList(StockID, StockName);
+            dl.Show();
         }
     }
 }

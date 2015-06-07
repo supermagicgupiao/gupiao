@@ -80,7 +80,6 @@ namespace Stock.UIController
             if (uim != null)
             {
                 DBC.DelegateController().AddDelegate(uim);
-
             }
             if (uis != null) 
             {
@@ -188,6 +187,20 @@ namespace Stock.UIController
         public List<string> GetUserList()
         {
             return usersController.GetUserList();
+        }
+        public void DelUser(string name)
+        {
+            if (usersController.GetUserList().Count == 1)
+            {
+                MessageBox.Show("不能删除最后一个账户!");
+                return;
+            }
+            usersController.DelUser(name);
+            UserBoxController.Handler().Remove(name);
+            CanvasDict.Remove(name);
+            NetDict.Remove(name);
+            InfoSwitch.Remove(name);
+            UserChange(usersController.GetUserList().First());
         }
     }
 }

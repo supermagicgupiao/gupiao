@@ -27,12 +27,24 @@ namespace Stock
         {
             InitializeComponent();
             List<string> user = UserPanelController.Handler().GetUserList();
-            foreach(string s in user)
+            int index = -1;
+            string u = DBSyncController.Handler().GetUserName();
+            foreach (string s in user)
             {
+                index++;
+                if (s == u)
+                    this.user.SelectedIndex = index;
                 ComboBoxItem cbi = new ComboBoxItem();
                 cbi.Content = s;
                 this.user.Items.Add(cbi);
             }
+            //List<string> user = UserPanelController.Handler().GetUserList();
+            //foreach(string s in user)
+            //{
+            //    ComboBoxItem cbi = new ComboBoxItem();
+            //    cbi.Content = s;
+            //    this.user.Items.Add(cbi);
+            //}
             change.Visibility = Visibility.Hidden;
             delete.Visibility = Visibility.Hidden;
         }
@@ -40,6 +52,7 @@ namespace Stock
         public AddDealList(string user, int deal)
         {
             InitializeComponent();
+            this.titlename.Text = "修改交易";
             add.Visibility = Visibility.Hidden;
             ComboBoxItem cbi = new ComboBoxItem();
             cbi.Content = user;

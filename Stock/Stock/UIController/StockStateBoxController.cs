@@ -101,22 +101,22 @@ namespace Stock.UIController
             canvasbox.Add(box);
             return true;
         }
-        public double ExistsRemove(string id)
-        {
-            double height = -5;
-            foreach(StockStateBox SSB in canvas.Children)
-            {
-                if (SSB.stockid == id)
-                {
-                    if (StockStateBox.pre == SSB)
-                        height = SSB.Margin.Top;
-                    canvas.Children.Remove(SSB);
-                    canvasbox.Remove(SSB);
-                    return height;
-                }
-            }
-            return height;
-        }
+        //public double ExistsRemove(string id)
+        //{
+        //    double height = -5;
+        //    foreach(StockStateBox SSB in canvas.Children)
+        //    {
+        //        if (SSB.stockid == id)
+        //        {
+        //            if (StockStateBox.pre == SSB)
+        //                height = SSB.Margin.Top;
+        //            canvas.Children.Remove(SSB);
+        //            canvasbox.Remove(SSB);
+        //            return height;
+        //        }
+        //    }
+        //    return height;
+        //}
         public void GetDelegateValues(StockHoldEntity SHE)
         {
             if (!Change(SHE.id, SHE.hold, SHE.money))

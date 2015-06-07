@@ -8,6 +8,7 @@
         <Grid.ContextMenu>
             <ContextMenu x:Name="cm" StaysOpen="true">
                 <MenuItem x:Name="item" Header="修改本金" Click="MenuItem_Click"/>
+                <MenuItem x:Name="remove" Header="删除账户" Click="Remove_Click"/>
             </ContextMenu>
         </Grid.ContextMenu>
         <Border x:Name="choose" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Left" Height="55" VerticalAlignment="Top" Width="130"/>

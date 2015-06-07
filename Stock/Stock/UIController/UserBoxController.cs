@@ -43,6 +43,36 @@ namespace Stock.UIController
             //ub.MouseRightButtonDown += UserChange;
             canvas.Children.Add(ub);
             AddBoxMove();
+            double h = add.Margin.Top + add.Height + 5;
+            if (h < 677)
+                canvas.Height = h;
+        }
+        public void Remove(string name)
+        {
+            bool flag = false;
+            UserBox mark = null;
+            UserBox premark = null;
+            foreach(UserBox ub in canvas.Children)
+            {
+                if (flag == true)
+                {
+                    ub.Margin = new Thickness(5, ub.Margin.Top - ub.Height - 5, 0, 0);
+                }
+                if (ub.name.Content.ToString() == name)
+                {
+                    flag = true;
+                    mark = ub;
+                    if(ub == UserBox.pre)
+                     UserBox.pre = premark;
+                }
+                premark = ub;
+            }
+            if (mark != null)
+                canvas.Children.Remove(mark);
+            AddBoxMove();
+            double h = add.Margin.Top + add.Height + 5;
+            if (h < 677)
+                canvas.Height = h;
         }
         private void AddBoxMove()
         {

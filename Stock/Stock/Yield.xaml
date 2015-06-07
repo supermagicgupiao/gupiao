@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Stock.Yield"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Yield" Height="452" Width="657" Background="{DynamicResource MainColorBrush}" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+        Title="Yield" Height="452" Width="657" Background="{DynamicResource MainColorBrush}" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" ResizeMode="NoResize">
     <Grid MouseMove="Grid_MouseMove" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="40"/>
