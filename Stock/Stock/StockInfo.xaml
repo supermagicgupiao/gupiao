@@ -32,13 +32,14 @@
             <Border Height="360" Width="540" Margin="0,130,0,0" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="1">
                 <Image x:Name="k"/>
             </Border>
-            <Button Content="分时" HorizontalAlignment="Left" Margin="26,509,0,0" VerticalAlignment="Top" Width="74" Click="TIME_Click"/>
-            <Button Content="周线" HorizontalAlignment="Left" Margin="99,509,0,0" VerticalAlignment="Top" Width="74" Click="WEEK_Click"/>
-            <Button Content="月线" HorizontalAlignment="Left" Margin="172,509,0,0" VerticalAlignment="Top" Width="74" Click="MONTH_Click"/>
-            <Button Content="30天" HorizontalAlignment="Left" Margin="245,509,0,0" VerticalAlignment="Top" Width="74" Click="DAY30_Click"/>
-            <Button Content="90天" HorizontalAlignment="Left" Margin="318,509,0,0" VerticalAlignment="Top" Width="74" Click="DAY90_Click"/>
-            <Button Content="180天" HorizontalAlignment="Left" Margin="390,509,0,0" VerticalAlignment="Top" Width="74" Click="DAY180_Click"/>
-            <Button Content="添加交易" HorizontalAlignment="Left" Margin="490,509,0,0" VerticalAlignment="Top" Width="74" Click="AddDealList_Click"/>
+            <Button Content="分时" HorizontalAlignment="Left" Margin="26,509,0,0" VerticalAlignment="Top" Width="65" Click="TIME_Click"/>
+            <Button Content="周线" HorizontalAlignment="Left" Margin="90,509,0,0" VerticalAlignment="Top" Width="65" Click="WEEK_Click"/>
+            <Button Content="月线" HorizontalAlignment="Left" Margin="154,509,0,0" VerticalAlignment="Top" Width="65" Click="MONTH_Click"/>
+            <Button Content="30天" HorizontalAlignment="Left" Margin="218,509,0,0" VerticalAlignment="Top" Width="65" Click="DAY30_Click"/>
+            <Button Content="90天" HorizontalAlignment="Left" Margin="282,509,0,0" VerticalAlignment="Top" Width="65" Click="DAY90_Click"/>
+            <Button Content="180天" HorizontalAlignment="Left" Margin="346,509,0,0" VerticalAlignment="Top" Width="65" Click="DAY180_Click"/>
+            <Button Content="查看交易" HorizontalAlignment="Left" Margin="430,509,0,0" VerticalAlignment="Top" Width="65" Click="ShowDealList_Click"/>
+            <Button Content="添加交易" HorizontalAlignment="Left" Margin="501,509,0,0" VerticalAlignment="Top" Width="65" Click="AddDealList_Click"/>
         </Grid>
     </Grid>
 </Window>

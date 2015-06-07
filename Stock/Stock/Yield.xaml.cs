@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Stock.Controller.DrawController;
 using Stock.Controller.NetController;
 using Stock.Controller.DBController.DBTable;
+using Stock.Controller.DBController;
 
 using Stock.UIController;
 
@@ -26,11 +27,21 @@ namespace Stock
     /// </summary>
     public partial class Yield : Window
     {
-        private List<string> idl;
         public Yield()
         {
             InitializeComponent();
-            user.Content = "(" + UserPanelController.Handler().name + ")";
+            List<string> user = UserPanelController.Handler().GetUserList();
+            int index = -1;
+            string u = DBSyncController.Handler().GetUserName();
+            foreach (string s in user)
+            {
+                index++;
+                if (s == u)
+                    this.user.SelectedIndex = index;
+                ComboBoxItem cbi = new ComboBoxItem();
+                cbi.Content = s;
+                this.user.Items.Add(cbi);
+            }
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
@@ -58,26 +69,26 @@ namespace Stock
         {
             DrawDataController DDC = new DrawDataController((int)(yield.Width), (int)(yield.Height));
             yield.Source = Adapter.ImageAdapter.ImageConvert(DDC.GetImage());
-            List<StockHoldEntity> SHEL;
-            DBSyncController.Handler().StockHoldReadAll(out SHEL);
-            if (SHEL.Count == 0)
-            {
-                MessageBox.Show("无任何股票");
-                this.Close();
-                return;
-            }
-            idl = SHEL.Select(s => s.id).ToList();
-            NetState.IdConvert(ref idl);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (user.Content.ToString() != "(" + DBSyncController.Handler().GetUserName() + ")")  
+            //if (user.Content.ToString() != "(" + DBSyncController.Handler().GetUserName() + ")")  
+            //{
+            //    MessageBox.Show("用户已改变");
+            //    this.Close();
+            //    return;
+            //}
+            List<StockHoldEntity> SHEL;
+            DBC.StockHoldReadAll(out SHEL);
+            if (SHEL.Count == 0)
             {
-                MessageBox.Show("用户已改变");
-                this.Close();
+                MessageBox.Show("无任何股票");
                 return;
             }
+            idl = SHEL.Select(s => s.id).ToList();
+            NetState.IdConvert(ref idl);
+
             DateTime date;
             int days;
             try
@@ -98,20 +109,19 @@ namespace Stock
             td.Width = (int)yield.Width;
             td.Height = (int)yield.Height;
 
-            ThreadImageGet(td);
-
             Thread get = new Thread(new ParameterizedThreadStart(ThreadImageGet));
             get.Start(td);
         }
+        private List<string> idl;
         private void ThreadImageGet(object data)
         {
             ThreadDate td = (ThreadDate)data;
             List<HistoryStockHoldEntity> HSHELNoSort;
-            DBSyncController.Handler().HistoryStockHoldReadByRange(td.date, td.days, out HSHELNoSort);
+            DBC.HistoryStockHoldReadByRange(td.date, td.days, out HSHELNoSort);
 
             Dictionary<string, int> hold = new Dictionary<string, int>();
             List<HistoryStockHoldEntity> HSHEL = HSHELNoSort.OrderBy(g => g.date).ToList();
-            double pri = DBSyncController.Handler().PrincipalRead();
+            double pri = DBC.PrincipalRead();
             double now = pri;
             foreach (HistoryStockHoldEntity HSHE in HSHEL)
             {
@@ -176,9 +186,6 @@ namespace Stock
             Action<Image, System.Drawing.Bitmap> updateAction = new Action<Image, System.Drawing.Bitmap>(UpdateImage);
             yield.Dispatcher.BeginInvoke(updateAction, yield, DDC.GetImage());
         }
-
-
-
 
         //private void ImageGet(object data)
         //{
@@ -257,6 +264,12 @@ namespace Stock
         private void UpdateImage(Image yield, System.Drawing.Bitmap bmp)
         {
             yield.Source = Adapter.ImageAdapter.ImageConvert(bmp);
+        }
+        private DBDataController DBC;
+        private void user_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string u = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
+            DBC = UserPanelController.Handler().DBControllerByName(u);
         }
     }
     struct ThreadDate

@@ -40,7 +40,7 @@ namespace Stock.UIController
             UserBox ub = new UserBox(name, pri.ToString());
             ub.Margin = new Thickness(5, height + 5, 0, 0);
             ub.MouseLeftButtonDown += UserChange;
-            ub.MouseRightButtonDown += UserChange;
+            //ub.MouseRightButtonDown += UserChange;
             canvas.Children.Add(ub);
             AddBoxMove();
         }

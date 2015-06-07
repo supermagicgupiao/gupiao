@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="677" Width="450" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" Background="Transparent" AllowsTransparency="True" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
     <Canvas>
-        <Grid x:Name="MainGrid" Height="677" Width="300" Margin="150,0,0,0" Background="{DynamicResource MainColorBrush}" MouseMove="MainGrid_MouseMove" MouseDown="MainGrid_MouseDown">
+        <Grid x:Name="MainGrid" Height="677" Width="300" Margin="150,0,0,0" Background="{DynamicResource MainColorBrush}" MouseMove="MainGrid_MouseMove" MouseDown="MainGrid_MouseDown" MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="title" Height="47"/>
                 <RowDefinition Height="Auto"/>
@@ -21,14 +21,14 @@
             <TextBlock HorizontalAlignment="Left" Margin="10,48,0,0" TextWrapping="Wrap" Text="现:" VerticalAlignment="Top" RenderTransformOrigin="0.398,1.118" FontSize="18" Grid.Row="1"/>
             <TextBox x:Name="now" HorizontalAlignment="Left" Height="27" Margin="54,46,0,0" VerticalAlignment="Top" Width="132" Grid.Row="1" FontSize="20" IsReadOnly="True" FontWeight="Thin" TextAlignment="Right" MouseDoubleClick="now_MouseDoubleClick" LostKeyboardFocus="now_LostKeyboardFocus" />
             <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="66" Margin="206,8,0,0" VerticalAlignment="Top" Width="84" Grid.Row="1">
-                <Grid x:Name="state" Background="Transparent" HorizontalAlignment="Left" Height="66" VerticalAlignment="Top" Width="84" Margin="-1,-1,0,0" Grid.Row="1" MouseEnter="Rectangle_MouseEnter" MouseLeave="Rectangle_MouseLeave" Focusable="True">
+                <Grid x:Name="state" Background="Transparent" HorizontalAlignment="Left" Height="66" VerticalAlignment="Top" Width="84" Margin="-1,-1,0,0" Grid.Row="1" MouseEnter="Rectangle_MouseEnter" MouseLeave="Rectangle_MouseLeave" Focusable="False">
                     <Label Content="盈亏" HorizontalAlignment="Center" FontSize="18" Margin="19,0,19,34"/>
                     <TextBlock x:Name="state1" TextWrapping="Wrap" HorizontalAlignment="Center" Text="" Margin="10,30,10,20"/>
                     <TextBlock x:Name="state2" TextWrapping="Wrap" HorizontalAlignment="Center" Text="" Margin="10,45,10,5"/>
                 </Grid>
             </Border>
             <TextBox x:Name="StockID" HorizontalAlignment="Left" Height="23" Margin="10,15,0,0" TextWrapping="Wrap" Text="搜索:请输入股票编号" VerticalAlignment="Top" Width="202" FontSize="16" Grid.Row="2" GotFocus="StockID_GotFocus" LostFocus="StockID_LostFocus" />
-            <Button Content="搜索" HorizontalAlignment="Left" Margin="239,15,0,0" VerticalAlignment="Top" Width="51" Height="23" Grid.Row="2" Click="Search_Click"/>
+            <Button x:Name="Search" Content="搜索" HorizontalAlignment="Left" Margin="239,15,0,0" VerticalAlignment="Top" Width="51" Height="23" Grid.Row="2" Click="Search_Click"/>
             <Canvas Background="{DynamicResource CanvasColor}" x:Name="StockCanvas" HorizontalAlignment="Left" Height="471" Margin="10,10,0,0" VerticalAlignment="Top" Width="280" Grid.Row="3" MouseWheel="StockCanvas_MouseWheel" ClipToBounds="True"/>
             <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="10,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/openexcel.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="OpenExcle_MouseLeftButtonDown"/>
             <Image Grid.Row="4" HorizontalAlignment="Left" Height="20" Margin="55,5,0,0" VerticalAlignment="Top" Width="20" Source="Resources/deallist.png" Stretch="Fill" RenderTransformOrigin="1.214,0.536" MouseLeftButtonDown="DealList_MouseLeftButtonDown"/>

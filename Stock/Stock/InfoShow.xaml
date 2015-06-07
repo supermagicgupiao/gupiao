@@ -19,6 +19,28 @@
         <TextBlock x:Name="now" HorizontalAlignment="Left" Margin="202,75,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
         <TextBlock x:Name="price" HorizontalAlignment="Left" Margin="202,45,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
         <TextBlock x:Name="principal" HorizontalAlignment="Left" Margin="202,105,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top"/>
-
+        <Grid.RenderTransform>
+            <TranslateTransform Y="0"/>
+        </Grid.RenderTransform>
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    <Trigger Property="IsVisible"  Value="true">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard Storyboard.TargetProperty="RenderTransform.Y">
+                                    <DoubleAnimation From="-100" To="0" Duration="00:00:00.5" BeginTime="00:00:00"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                            <BeginStoryboard>
+                                <Storyboard Storyboard.TargetProperty="Opacity">
+                                    <DoubleAnimation From="0.5" To="1" Duration="00:00:00.5" BeginTime="00:00:00"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
     </Grid>
 </Window>

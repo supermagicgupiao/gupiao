@@ -9,34 +9,36 @@
         </Grid.RowDefinitions>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="176,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/min.png" Stretch="Fill" MouseLeftButtonDown="Min_MouseLeftButtonDown"/>
         <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="209,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="添加交易" VerticalAlignment="Top" FontSize="18" Height="23" Width="77"/>
-        <Label x:Name="user" Content="(账户)" HorizontalAlignment="Left" Margin="84,10,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Thin"/>
-        <Label Content="名称:" HorizontalAlignment="Left" Margin="10,20,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="编号:" HorizontalAlignment="Left" Margin="10,50,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="日期:" HorizontalAlignment="Left" Margin="10,80,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="类型:" HorizontalAlignment="Left" Margin="10,110,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="价格:" HorizontalAlignment="Left" Margin="10,140,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="数量:" HorizontalAlignment="Left" Margin="10,170,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="税率:" HorizontalAlignment="Left" Margin="10,200,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="佣金:" HorizontalAlignment="Left" Margin="10,230,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="说明:" HorizontalAlignment="Left" Margin="10,260,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label Content="备注:" HorizontalAlignment="Left" Margin="10,290,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <TextBox x:Name="name" HorizontalAlignment="Left" Height="23" Margin="84,20,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135" IsReadOnly="True"/>
-        <TextBox x:Name="id" HorizontalAlignment="Left" Height="23" Margin="84,50,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135" IsReadOnly="True"/>
-        <TextBox x:Name="date" HorizontalAlignment="Left" Height="23" Margin="84,80,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <ComboBox x:Name="type" HorizontalAlignment="Left" Margin="84,110,0,0" Grid.Row="1" VerticalAlignment="Top" Width="135" Height="23" SelectedIndex="0">
+        <TextBlock x:Name="titlename" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="添加交易" VerticalAlignment="Top" FontSize="18" Height="23" Width="77"/>
+        <Label Content="账户:" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="名称:" HorizontalAlignment="Left" Margin="10,34,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="编号:" HorizontalAlignment="Left" Margin="10,64,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="日期:" HorizontalAlignment="Left" Margin="10,94,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="类型:" HorizontalAlignment="Left" Margin="10,124,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="价格:" HorizontalAlignment="Left" Margin="10,154,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="数量:" HorizontalAlignment="Left" Margin="10,184,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="税率:" HorizontalAlignment="Left" Margin="10,214,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="佣金:" HorizontalAlignment="Left" Margin="10,244,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="说明:" HorizontalAlignment="Left" Margin="10,274,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Content="备注:" HorizontalAlignment="Left" Margin="10,304,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <ComboBox x:Name="user" HorizontalAlignment="Left" Margin="84,6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="135" Height="23" SelectedIndex="0"/>
+        <TextBox x:Name="name" HorizontalAlignment="Left" Height="23" Margin="84,36,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135" IsReadOnly="True"/>
+        <TextBox x:Name="id" HorizontalAlignment="Left" Height="23" Margin="84,66,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135" IsReadOnly="True"/>
+        <TextBox x:Name="date" HorizontalAlignment="Left" Height="23" Margin="84,96,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <ComboBox x:Name="type" HorizontalAlignment="Left" Margin="84,126,0,0" Grid.Row="1" VerticalAlignment="Top" Width="135" Height="23" SelectedIndex="0">
             <ComboBoxItem Content="买入"/>
             <ComboBoxItem Content="卖出"/>
             <ComboBoxItem Content="补仓"/>
             <ComboBoxItem Content="卖空"/>
         </ComboBox>
-        <TextBox x:Name="money" HorizontalAlignment="Left" Height="23" Margin="84,140,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <TextBox x:Name="number" HorizontalAlignment="Left" Height="23" Margin="84,170,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <TextBox x:Name="taxrate" HorizontalAlignment="Left" Height="23" Margin="84,200,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <TextBox x:Name="commission" HorizontalAlignment="Left" Height="23" Margin="84,230,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <TextBox x:Name="explain" HorizontalAlignment="Left" Height="23" Margin="84,260,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <TextBox x:Name="remark" HorizontalAlignment="Left" Height="23" Margin="84,290,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
-        <Button Content="添加" HorizontalAlignment="Left" Margin="150,338,0,-19" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-
+        <TextBox x:Name="money" HorizontalAlignment="Left" Height="23" Margin="84,156,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <TextBox x:Name="number" HorizontalAlignment="Left" Height="23" Margin="84,186,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <TextBox x:Name="taxrate" HorizontalAlignment="Left" Height="23" Margin="84,216,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <TextBox x:Name="commission" HorizontalAlignment="Left" Height="23" Margin="84,246,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <TextBox x:Name="explain" HorizontalAlignment="Left" Height="23" Margin="84,276,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <TextBox x:Name="remark" HorizontalAlignment="Left" Height="23" Margin="84,306,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="135"/>
+        <Button x:Name="add" Content="添加" HorizontalAlignment="Left" Margin="150,341,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button x:Name="change" Content="修改" HorizontalAlignment="Left" Margin="150,341,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="CButton_Click"/>
+        <Button x:Name="delete" Content="删除" HorizontalAlignment="Left" Margin="20,341,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="CButton_Click"/>
     </Grid>
 </Window>

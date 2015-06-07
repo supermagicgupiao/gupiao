@@ -80,6 +80,14 @@ namespace Stock.Controller.DBController.DBTable
             SQLiteDataReader reader = cmd.ExecuteReader();
             HSHEL = Package(reader);
         }
+        //删除id相关的记录
+        public void Delete(string id)
+        {
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            cmd.CommandText = "delete from '" + user + "_HistoryStockHold' where id=@id";
+            cmd.Parameters.Add(new SQLiteParameter("id", id));
+            SQLiteDataReader reader = cmd.ExecuteReader();
+        }
         //Reader数据封装成list
         private List<HistoryStockHoldEntity> Package(SQLiteDataReader reader)
         {

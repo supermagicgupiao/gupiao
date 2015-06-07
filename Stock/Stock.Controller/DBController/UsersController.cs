@@ -24,7 +24,7 @@ namespace Stock.Controller.DBController
         //默认数据库
         public UsersController()
         {
-            dbPath = Environment.CurrentDirectory + "\\Stock.db";
+            dbPath = "Stock.db";
             DBE = Check();
         }
         //指定数据库
@@ -172,6 +172,10 @@ namespace Stock.Controller.DBController
                     return DB_ERROR.DB_DATA_NOT_EXISTS;
                 foreach (UsersEntity UE in UEL)
                 {
+                    if (!File.Exists(UE.path))
+                    {
+                        continue;
+                    }
                     AddUser(UE.name, UE.path);
                 }
             }

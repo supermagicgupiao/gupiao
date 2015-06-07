@@ -151,7 +151,7 @@ namespace Stock.UIController
             }
             UserChange(name);
         }
-        private void UserChange(string name)
+        public void UserChange(string name)
         {
             this.name = name;
             setDBDataController(name);
@@ -180,6 +180,14 @@ namespace Stock.UIController
         public static UserPanelController Handler()
         {
             return UPC;
+        }
+        public DBDataController DBControllerByName(string name)
+        {
+            return usersController.GetUserControler(name);
+        }
+        public List<string> GetUserList()
+        {
+            return usersController.GetUserList();
         }
     }
 }

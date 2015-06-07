@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" Width="270" Height="90" Background="{DynamicResource BoxColor}" MouseDoubleClick="UserControl_MouseDoubleClick" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave">
-    <Grid>
+    <Grid Background="Transparent" Style="{StaticResource ShowOpacity}">
         <Border x:Name="choose" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Left" Height="90" VerticalAlignment="Top" Width="270"/>
         <TextBlock HorizontalAlignment="Left" Margin="12,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24"><Run x:Name="StockName" Text="" FontWeight="Thin"/></TextBlock>
         <TextBox x:Name="price" HorizontalAlignment="Left" Height="20" Margin="75,23,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="87" FontSize="14" IsEnabled="False"/>

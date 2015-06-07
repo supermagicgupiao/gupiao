@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 
 using Microsoft.Win32;
 using System.Threading;
+using System.IO;
 
 using Stock.Controller.NetController;
 using Stock.Controller.DrawController;
@@ -114,7 +115,6 @@ namespace Stock
         private void DealList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DealList dlg = new DealList();
-            DBSyncController.Handler().DealListReadAll(out dlg.DLEL);
             dlg.Show();
         }
 
@@ -377,6 +377,38 @@ namespace Stock
             {
                 MessageBox.Show(NetDataController.GetLog());
             }
+            if (e.Key == Key.F1)
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Title = "选择文件";
+                openFileDialog.Filter = "png,jpg文件|*.png;*.jpg";
+                openFileDialog.FileName = string.Empty;
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    CroppedBitmap cb = new CroppedBitmap(new BitmapImage(new Uri(openFileDialog.FileName, UriKind.Absolute)),new Int32Rect(0,0,(int)MainGrid.ActualWidth,(int)MainGrid.ActualHeight));
+                    ImageBrush brush = new ImageBrush();
+                    brush.ImageSource = cb;
+                    //brush.Opacity = 0.95;
+                    MainGrid.Background = brush;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            //if (e.Key == Key.F2) 
+            //{
+            //    BitmapSource bsrc = (BitmapSource)((ImageBrush)MainGrid.Background).ImageSource;
+            //    PngBitmapEncoder pngE = new PngBitmapEncoder();
+
+            //    pngE.Frames.Add(BitmapFrame.Create(bsrc));
+            //    using (Stream stream = File.Create("background.png"))
+            //    {
+            //        pngE.Save(stream);
+            //    }
+            //}
         }
 
 
@@ -459,6 +491,14 @@ namespace Stock
         {
             Setting dlg = new Setting();
             dlg.ShowDialog();
+        }
+
+        private void MainGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (StockID.Text == "")
+            {
+                Search.Focus();
+            }
         }
     }
 }

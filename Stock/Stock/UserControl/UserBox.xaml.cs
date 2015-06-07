@@ -35,7 +35,7 @@ namespace Stock
             this.name.Content = name;
             this.pri.Content = "";
             this.cm.Visibility = Visibility.Hidden;
-//            this.item.Click -= new RoutedEventHandler(MenuItem_Click);
+//          this.item.Click -= new RoutedEventHandler(MenuItem_Click);
         }
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
@@ -76,10 +76,11 @@ namespace Stock
             InputMoney im = new InputMoney();
             im.name.Text = this.name.Content.ToString();
             im.name.IsEnabled = false;
-            double pri = DBSyncController.Handler().PrincipalRead();
+            string u = name.Content.ToString();
+            double pri = UserPanelController.Handler().DBControllerByName(u).PrincipalRead();
             im.money.Text = pri.ToString();
             im.ShowDialog();
-            double now = DBSyncController.Handler().NowMoneyRead();
+            double now = UserPanelController.Handler().DBControllerByName(u).NowMoneyRead();
 
             if (im.m == 0)
             {
@@ -91,7 +92,7 @@ namespace Stock
                 return;
             }
             this.pri.Content = "本金:" + im.m;
-            DBSyncController.Handler().PrincipalChange(im.m - pri);
+            UserPanelController.Handler().DBControllerByName(u).PrincipalChange(im.m - pri);
         }
 
     }

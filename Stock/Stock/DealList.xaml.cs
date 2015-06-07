@@ -25,9 +25,33 @@ namespace Stock
         public DealList()
         {
             InitializeComponent();
-            user.Content = "(" + UserPanelController.Handler().name + ")";
+            name.Text = "交易记录";
+            SetUserList();
         }
-        public List<DealListEntity> DLEL;
+        public DealList(string id,string name)
+        {
+            InitializeComponent();
+            this.name.Text = name;
+            this.id = id;
+            SetUserList();
+        }
+        private void SetUserList()
+        {
+            List<string> user = UserPanelController.Handler().GetUserList();
+            int index = -1;
+            string u = DBSyncController.Handler().GetUserName();
+            foreach (string s in user)
+            {
+                index++;
+                if (s == u)
+                    this.user.SelectedIndex = index;
+                ComboBoxItem cbi = new ComboBoxItem();
+                cbi.Content = s;
+                this.user.Items.Add(cbi);
+            }
+        }
+        private string id = null;
+        private List<DealListEntity> DLEL;
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -63,9 +87,14 @@ namespace Stock
                 h[i].Width = width[i];
                 ListView.Columns.Add(h[i]);
             }
+        }
+
+        private void DealListShow()
+        {
+            DList.Items.Clear();
             foreach (DealListEntity DLE in DLEL)
             {
-                ItemData data = new ItemData(DLE.name, DLE.id, DLE.date.ToString("yyyy/MM/dd"), DLE.type, DLE.money.ToString(), DLE.number.ToString(), DLE.taxrate.ToString(), DLE.commission.ToString(), DLE.explain, DLE.remark);
+                ItemData data = new ItemData(DLE.deal, DLE.name, DLE.id, DLE.date.ToString("yyyy/MM/dd"), DLE.type, DLE.money.ToString(), DLE.number.ToString(), DLE.taxrate.ToString(), DLE.commission.ToString(), DLE.explain, DLE.remark);
                 DList.Items.Add(data);
             }
             DList.UpdateLayout();
@@ -77,13 +106,40 @@ namespace Stock
             if (o == null)
                 return;
             ItemData item = o as ItemData;
-            MessageBox.Show("暂时未提供修改功能!");
+            AddDealList adl = new AddDealList(user.Text, item.deal);
+            adl.ShowDialog();
+            DealListEntity DLE = UserPanelController.Handler().DBControllerByName(user.Text).DealListReadByDeal(item.deal);
+            int index = DList.SelectedIndex;
+            DList.Items.Remove(item);
+            if (DLE.id == item.id)
+            {
+                item = new ItemData(DLE.deal, DLE.name, DLE.id, DLE.date.ToString("yyyy/MM/dd"), DLE.type, DLE.money.ToString(), DLE.number.ToString(), DLE.taxrate.ToString(), DLE.commission.ToString(), DLE.explain, DLE.remark);
+                DList.Items.Insert(index, item);
+            }
+            DList.UpdateLayout();
+            //MessageBox.Show("暂时未提供修改功能!");
+        }
+
+        private void user_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string u = ((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content.ToString();
+            if (id == null) 
+            {
+                UserPanelController.Handler().DBControllerByName(u).DealListReadAll(out DLEL);
+                DealListShow();
+            }
+            else
+            {
+                UserPanelController.Handler().DBControllerByName(u).DealListReadById(id, out DLEL);
+                DealListShow();
+            }
         }
     }
     public class ItemData
     {
-        public ItemData(string name, string id ,string date ,string type ,string money ,string number, string taxrate ,string commission ,string explain ,string remark)
+        public ItemData(int deal, string name, string id ,string date ,string type ,string money ,string number, string taxrate ,string commission ,string explain ,string remark)
         {
+            this.deal = deal;
             this.name = name;
             this.id = id;
             this.date = date;
@@ -95,6 +151,7 @@ namespace Stock
             this.explain = explain;
             this.remark = remark;
         }
+        public int deal { get; set; }
         public string name { get; set; }
         public string id { get; set; }
         public string date { get; set; }

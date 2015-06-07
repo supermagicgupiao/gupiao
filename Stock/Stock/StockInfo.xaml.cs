@@ -162,5 +162,10 @@ namespace Stock
             ADL.commission.Text = "0.3‰";
             ADL.ShowDialog();
         }
+
+        private void ShowDealList_Click(object sender, RoutedEventArgs e)
+        {
+            DealList dl = new DealList(StockID, StockName);
+        }
     }
 }

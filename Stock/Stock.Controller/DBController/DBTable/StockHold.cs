@@ -52,6 +52,14 @@ namespace Stock.Controller.DBController.DBTable
             cmd.Parameters.Add(new SQLiteParameter("money", SHE.money));
             cmd.ExecuteNonQuery();
         }
+        //删除id相关数据
+        public void Delete(string id)
+        {
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "delete from '" + user + "_StockHold' where id=@id";
+            cmd.Parameters.Add(new SQLiteParameter("id", id));
+            cmd.ExecuteNonQuery();
+        }
         //读取数据
         public void Select(ref StockHoldEntity SHE)
         {

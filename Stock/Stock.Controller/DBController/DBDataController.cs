@@ -34,6 +34,9 @@ namespace Stock.Controller.DBController
         //委托类
         private DBDelegateBridge delegateController;
 
+        //交易记录id号
+        private int dealid = 0;
+
         //用户名
         private string user;
         public string GetUserName()
@@ -147,9 +150,22 @@ namespace Stock.Controller.DBController
         {
             deallist.Select(out DLEL);
         }
+        //读取id全部的交易记录
+        public void DealListReadById(string id, out List<DealListEntity> DLEL)
+        {
+            deallist.Select(id, out DLEL);
+        }
+        //读取交易号交易记录
+        public DealListEntity DealListReadByDeal(int deal)
+        {
+            DealListEntity DLE;
+            deallist.Select(deal, out DLE);
+            return DLE;
+        }
         //增加交易记录
         public void DealListAdd(DealListEntity DLE)
         {
+            DLE.deal = dealid;
             deallist.Insert(DLE);
             DealList_Insert_StockHold(DLE);
             MoneyReadSet();
@@ -159,8 +175,47 @@ namespace Stock.Controller.DBController
         {
             foreach (DealListEntity DLE in DLEL)
             {
-                deallist.Insert(DLE);
-                DealList_Insert_StockHold(DLE);
+                DealListEntity D = DLE;
+                D.deal = dealid;
+                deallist.Insert(D);
+                DealList_Insert_StockHold(D);
+            }
+            MoneyReadSet();
+        }
+        //修改交易记录
+        public void DealListUpdate(DealListEntity DLE)
+        {
+            deallist.Update(DLE);
+            DealListRestore(DLE);
+        }
+        //删除交易记录
+        public void DealListDelete(DealListEntity DLE)
+        {
+            deallist.Delate(DLE.deal);
+            DealListRestore(DLE);
+        }
+        //重置id相关
+        private void DealListRestore(DealListEntity DLE)
+        {
+            List<DealListEntity> DLEL;
+            deallist.Select(DLE.id, out DLEL);
+            StockHoldEntity SHE = new StockHoldEntity();
+            SHE.id = DLE.id;
+            stockhold.Select(ref SHE);
+            MoneyChangeNow(SHE.money);
+            stockhold.Delete(DLE.id);
+            historystockhold.Delete(DLE.id);
+            if (DLEL.Count == 0)
+            {
+                SHE.hold = 0;
+                SHE.id = DLE.id;
+                SHE.money = 0;
+                SHE.name = DLE.name;
+                StockHoldSet(SHE);
+            }
+            foreach (DealListEntity D in DLEL)
+            {
+                DealList_Insert_StockHold(D);
             }
             MoneyReadSet();
         }
@@ -323,40 +378,43 @@ namespace Stock.Controller.DBController
         //按类型转换
         private void DealList_Insert_StockHold(DealListEntity DLE)
         {
+            if (DLE.deal >= dealid)
+                dealid = DLE.deal + 1;
             StockHoldEntity SHE = new StockHoldEntity();
             SHE.id = DLE.id;
             SHE.name = DLE.name;
+            double c;
             if (DLE.type == "买入")
             {
                 SHE.hold = DLE.number;
-                double c = -(DLE.number * DLE.money);
+                c = -(DLE.number * DLE.money);
                 MoneyChangeNow(c);
             }
             else if (DLE.type == "卖出")
             {
                 SHE.hold = -DLE.number;
-                double c = DLE.number * DLE.money;
-                MoneyChangeNow(c);
-            }
-            else if (DLE.type == "卖空")
-            {
-                SHE.hold = DLE.number;
-                double c = -(DLE.number * DLE.money);
+                c = DLE.number * DLE.money;
                 MoneyChangeNow(c);
             }
             else if (DLE.type == "补仓")
             {
+                SHE.hold = DLE.number;
+                c = -(DLE.number * DLE.money);
+                MoneyChangeNow(c);
+            }
+            else if (DLE.type == "卖空")
+            {
                 SHE.hold = -DLE.number;
-                double c = DLE.number * DLE.money;
+                c = DLE.number * DLE.money;
                 MoneyChangeNow(c);
             }
             else
             {
                 SHE.hold = DLE.number;
-                double c = -(DLE.number * DLE.money);
+                c = -(DLE.number * DLE.money);
                 MoneyChangeNow(c);
             }
-            SHE.money = Convert.ToDouble(DLE.money) * Convert.ToDouble(SHE.hold);
+            SHE.money = -c;
             StockHoldEntity SHE_=new StockHoldEntity();
             SHE_.id = SHE.id;
             stockhold.Select(ref SHE_);

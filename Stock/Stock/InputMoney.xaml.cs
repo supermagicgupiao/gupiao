@@ -34,8 +34,15 @@ namespace Stock
         private void ButtonOK_Click(object sender, RoutedEventArgs e)
         {
             n = name.Text;
-            if (Double.TryParse(money.Text, out m) && m!=0)
+            if (Double.TryParse(money.Text, out m) && m != 0)
+            {
+                if (m > 99999999.99)
+                {
+                    MessageBox.Show("本金设置最大值为99999999.99元！");
+                    return;
+                }
                 this.Close();
+            }
             else
                 MessageBox.Show("错误的本金金额！");
         }

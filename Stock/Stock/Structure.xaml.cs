@@ -29,12 +29,13 @@ namespace Stock
         private List<StockView> list = new List<StockView>();
         private List<string> select = new List<string>();
         private Dictionary<string, Color> stockcolor = new Dictionary<string, Color>();
-
+        private string name;
         public Structure()
         {
             InitializeComponent();
             this.StockList.ItemsSource = list;
-            user.Content = "(" + UserPanelController.Handler().name + ")";
+            name = UserPanelController.Handler().name;
+            user.Content = "(" + name + ")";
         }
         private void Min_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -62,7 +63,7 @@ namespace Stock
             DrawDataController DDC = new DrawDataController((int)(hold.Width), (int)(hold.Height));
             hold.Source = Adapter.ImageAdapter.ImageConvert(DDC.GetImage());
             List<StockHoldEntity> SHEL;
-            DBSyncController.Handler().StockHoldReadAll(out SHEL);
+            UserPanelController.Handler().DBControllerByName(name).StockHoldReadAll(out SHEL);
             List<string> idl = SHEL.Select(s => s.id).ToList();
             NetState.IdConvert(ref idl);
             List<DrawPieEntity> DPEL = new List<DrawPieEntity>();
@@ -125,7 +126,7 @@ namespace Stock
 
         private void ShowImage(object sender, RoutedEventArgs e)
         {
-            if (user.Content.ToString() != "(" + DBSyncController.Handler().GetUserName() + ")")
+            if (user.Content.ToString() != "(" + UserPanelController.Handler().DBControllerByName(name).GetUserName() + ")")
             {
                 MessageBox.Show("用户已改变！");
                 this.Close();
@@ -157,7 +158,7 @@ namespace Stock
             {
                 DrawDataEntity DDE = new DrawDataEntity();
                 List<DrawDataEntity> DDEL = new List<DrawDataEntity>();
-                DBSyncController.Handler().HistoryStockHoldReadByRange(id.Substring(1), date, days, out HSHEL);
+                UserPanelController.Handler().DBControllerByName(name).HistoryStockHoldReadByRange(id.Substring(1), date, days, out HSHEL);
                 if(HSHEL.Count == 0)
                     continue;
                 NetDataController.HistoryMoney(id, date, days, out money);
