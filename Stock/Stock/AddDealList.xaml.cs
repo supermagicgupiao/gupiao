@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using Stock.Controller.DBController.DBTable;
+using Stock.Controller.DBController;
 using Stock.Controller.NetController;
 
 using Stock.UIController;
@@ -146,7 +147,10 @@ namespace Stock
             DLE.explain = explain.Text;
             DLE.remark = remark.Text;
             UserPanelController.Handler().UserChange(u);
-            UserPanelController.Handler().DBControllerByName(u).DealListAdd(DLE);
+
+            //UserPanelController.Handler().DBControllerByName(u).DealListAdd(DLE);
+            DBDataThreadController.DBDataThreadControllerHandler(UserPanelController.Handler().DBControllerByName(u)).DealListAdd(DLE);
+            MainWindow.ShowNotifyMessage("交易记录已添加\n股票:" + DLE.name + "以" + DLE.money + "元" + DLE.type + DLE.number + "股!");
             //MessageBox.Show("添加成功!");
             //StockStateBoxController.Handler().Add(id.Text, name.Text, Convert.ToInt32(number.Text), Convert.ToDouble(money.Text) * Convert.ToInt32(number.Text));
             this.Close();
@@ -189,9 +193,17 @@ namespace Stock
             DLE.remark = remark.Text;
             string t = ((Button)sender).Content.ToString();
             if (t == "删除")
-                UserPanelController.Handler().DBControllerByName(u).DealListDelete(DLE);
+            {
+                DBDataThreadController.DBDataThreadControllerHandler(UserPanelController.Handler().DBControllerByName(u)).DealListDelete(DLE);
+                //UserPanelController.Handler().DBControllerByName(u).DealListDelete(DLE);
+                MainWindow.ShowNotifyMessage("交易记录已删除\n股票:" + DLE.name + "!");
+            }
             else if (t == "修改")
-                UserPanelController.Handler().DBControllerByName(u).DealListUpdate(DLE);
+            {
+                DBDataThreadController.DBDataThreadControllerHandler(UserPanelController.Handler().DBControllerByName(u)).DealListUpdate(DLE);
+                //UserPanelController.Handler().DBControllerByName(u).DealListUpdate(DLE);
+                MainWindow.ShowNotifyMessage("交易记录已修改\n股票:" + DLE.name + "以" + DLE.money + "元" + DLE.type + DLE.number + "股!");
+            }
             this.Close();
         }
     }

@@ -7,6 +7,7 @@ using System.Windows;
 
 using Stock.Controller.DBController;
 using Stock.Controller.NetController;
+using Stock.Controller.ExcelController;
 
 namespace Stock.Adapter
 {
@@ -59,6 +60,17 @@ namespace Stock.Adapter
             else if (e == NET_ERROR.NET_REQ_ERROR)
             {
                 MessageBox.Show("请求错误");
+            }
+        }
+        public static void Show(OPENEXCEL_ERROR e)
+        {
+            if (e == OPENEXCEL_ERROR.FORMAT_ERROR)
+            {
+                MessageBox.Show("存在格式错误行");
+            }
+            else if (e == OPENEXCEL_ERROR.OLE_ERROR)
+            {
+                MessageBox.Show("excel版本不支持\n请安装excel后再尝试");
             }
         }
     }

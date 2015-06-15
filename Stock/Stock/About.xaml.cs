@@ -11,35 +11,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-using Stock.Controller.NetController;
-
 namespace Stock
 {
     /// <summary>
-    /// Setting.xaml 的交互逻辑
+    /// About.xaml 的交互逻辑
     /// </summary>
-    public partial class Setting : Window
+    public partial class About : Window
     {
-        private static int index = 0;
-        public Setting()
+        public About()
         {
             InitializeComponent();
-            api.SelectedIndex = index;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (api.Text == "新浪")
-                MessageBox.Show("新浪api作为后备源\n部分k线图和历史记录功能无法完全代替\n仅在无法正常使用网易api时备用");
-            NetDataController.ChangeApi(api.Text);
-            index = api.SelectedIndex;
-            MainWindow.ShowNotifyMessage("股票api成功切换为:" + api.Text + "!");
-            this.Close();
-        }
-
-        private void Min_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            this.WindowState = WindowState.Minimized;
         }
 
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -57,6 +38,5 @@ namespace Stock
                 }
             }
         }
-
     }
 }

@@ -26,6 +26,7 @@ namespace StockTest
             ExcelDataController EDC = new ExcelDataController();
             List<DealListEntity> DLEL;
             Assert.AreEqual(OPENEXCEL_ERROR.FORMAT_ERROR, EDC.Open(Environment.CurrentDirectory + "//TestExcel//股票数据缺列.xlsx", out DLEL));
+            Assert.AreEqual(0, DLEL.Count);
         }
         [TestMethod]
         //xls和xlsx测试
@@ -33,8 +34,8 @@ namespace StockTest
         {
             ExcelDataController EDC = new ExcelDataController();
             List<DealListEntity> DLEL;
-            Assert.AreEqual(OPENEXCEL_ERROR.OPEN_OK, EDC.Open(Environment.CurrentDirectory + "//TestExcel//股票数据.xlsx", out DLEL));
-            Assert.AreEqual(OPENEXCEL_ERROR.OPEN_OK, EDC.Open(Environment.CurrentDirectory + "//TestExcel//股票数据.xls", out DLEL));
+            Assert.AreEqual(OPENEXCEL_ERROR.FORMAT_ERROR, EDC.Open(Environment.CurrentDirectory + "//TestExcel//股票数据.xlsx", out DLEL));
+            Assert.AreEqual(OPENEXCEL_ERROR.FORMAT_ERROR, EDC.Open(Environment.CurrentDirectory + "//TestExcel//股票数据.xls", out DLEL));
         }
         [TestMethod]
         //读取数据测试

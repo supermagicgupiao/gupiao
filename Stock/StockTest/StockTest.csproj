@@ -38,9 +38,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Stock.Controller">
-      <HintPath>..\Stock.Controller\bin\Debug\Stock.Controller.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -57,11 +54,17 @@
   </Choose>
   <ItemGroup>
     <Compile Include="DBControllerTest.cs" />
+    <Compile Include="DBUserController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExcelControllerTest.cs" />
     <Compile Include="NetControllerTest.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Stock.Controller\Stock.Controller.csproj">
+      <Project>{37c25298-a7f5-4db2-ab2f-9bcc33a157b3}</Project>
+      <Name>Stock.Controller</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="TestDB\crack.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

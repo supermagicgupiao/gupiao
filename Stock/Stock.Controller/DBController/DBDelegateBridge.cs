@@ -38,6 +38,7 @@ namespace Stock.Controller.DBController
         {
             foreach(UIMoney x in MoneyDelegateList)
             {
+                //x.Invoke(ME);
                 x(ME);
             }
         }
@@ -45,6 +46,7 @@ namespace Stock.Controller.DBController
         {
             foreach (UIStockHold x in StockHoldDelegateList)
             {
+                //x.Invoke(SHE);
                 x(SHE);
             }
         }

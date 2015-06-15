@@ -17,8 +17,8 @@ namespace StockTest
         public void DBDataControllerCreateTest()
         {
             File.Delete(Environment.CurrentDirectory + "\\Stock.db");//先移除默认数据库
-            DBDataController DBC = new DBDataController();
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user1", Environment.CurrentDirectory + "\\Stock.db");
+            DB_ERROR DBE = DBC.GetLastError();
             Assert.AreEqual(DB_ERROR.DB_DATA_NOT_EXISTS, DBE);//正常返回数据不存在
             Assert.IsTrue(File.Exists(Environment.CurrentDirectory + "\\Stock.db"));//检测数据库是否生成
         }
@@ -26,32 +26,32 @@ namespace StockTest
         //错误路径的构造方式
         public void DBDataControllerCheckConnectTest()
         {
-            DBDataController DBC = new DBDataController("/r/n");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user2", "/r/n");
+            DB_ERROR DBE = DBC.GetLastError();
             Assert.AreEqual(DB_ERROR.DB_CANT_CONNECT, DBE);//数据库无法连接
         }
         [TestMethod]
         //crack数据库测试
         public void DBDataControllerCheckCrackTest()
         {
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\TestDB\\crack.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user3", Environment.CurrentDirectory + "\\TestDB\\crack.db");
+            DB_ERROR DBE = DBC.GetLastError();
             Assert.AreEqual(DB_ERROR.DB_TABLE_CRACK_FIX, DBE);//返回损坏并修复状态
         }
         [TestMethod]
         //没有本金数据库测试
         public void DBDataControllerCheckDataTest()
         {
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\TestDB\\tableNoPrincipal.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user4", Environment.CurrentDirectory + "\\TestDB\\tableNoPrincipal.db");
+            DB_ERROR DBE = DBC.GetLastError();
             Assert.AreEqual(DB_ERROR.DB_DATA_NOT_EXISTS, DBE);//返回数据不存在
         }
         [TestMethod]
         //没表数据库测试
         public void DBDataControllerCheckTableTest()
         {
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\TestDB\\noTable.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user5", Environment.CurrentDirectory + "\\TestDB\\noTable.db");
+            DB_ERROR DBE = DBC.GetLastError();
             Assert.AreEqual(DB_ERROR.DB_DATA_NOT_EXISTS, DBE);//返回数据不存在
         }
         [TestMethod]
@@ -59,8 +59,8 @@ namespace StockTest
         public void DBDataControllerDealListTest()
         {
             File.Delete(Environment.CurrentDirectory + "\\Stock1.db");
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock1.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user6", Environment.CurrentDirectory + "\\Stock1.db");
+            DB_ERROR DBE = DBC.GetLastError();
             DealListEntity DLE = new DealListEntity();
             DLE.id = "600001";
             DLE.name = "邯郸钢铁";
@@ -76,8 +76,8 @@ namespace StockTest
         public void DBDataControllerPrincipalTest()
         {
             File.Delete(Environment.CurrentDirectory + "\\Stock2.db");
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock2.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user7", Environment.CurrentDirectory + "\\Stock2.db");
+            DB_ERROR DBE = DBC.GetLastError();
             DBC.PrincipalCreate(100000000000000.00);
             Assert.AreEqual(100000000000000.00, DBC.PrincipalRead());
             for (int i = 0; i < 100; i++)
@@ -93,8 +93,8 @@ namespace StockTest
         public void DBDataControllerLogTest()
         {
             File.Delete(Environment.CurrentDirectory + "\\Stock3.db");
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock3.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user8", Environment.CurrentDirectory + "\\Stock3.db");
+            DB_ERROR DBE = DBC.GetLastError();
             LogEntity LE = new LogEntity();
             LE.state = "状态";
             LE.context = "错误内容";
@@ -110,8 +110,8 @@ namespace StockTest
         public void DBDataControllerStockHoldTest()
         {
             File.Delete(Environment.CurrentDirectory + "\\Stock4.db");
-            DBDataController DBC = new DBDataController(Environment.CurrentDirectory + "\\Stock4.db");
-            DB_ERROR DBE = DBC.Check();
+            DBDataController DBC = new DBDataController("user9", Environment.CurrentDirectory + "\\Stock4.db");
+            DB_ERROR DBE = DBC.GetLastError();
             DealListEntity DLE = new DealListEntity();
             DLE.id = "600001";
             DLE.name = "邯郸钢铁";

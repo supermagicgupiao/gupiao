@@ -1,0 +1,17 @@
+﻿<Window x:Class="Stock.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Structure" Height="158" Width="300" Background="{DynamicResource MainColorBrush}" WindowStyle="None" SnapsToDevicePixels="True" Visibility="Visible" AllowsTransparency="True" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid  MouseMove="Grid_MouseMove" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="title" Height="40"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" HorizontalAlignment="Left" Height="28" Margin="262,10,0,0" VerticalAlignment="Top" Width="28" Source="Resources/close.png" Stretch="Fill" MouseLeftButtonDown="Close_MouseLeftButtonDown"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="关于" VerticalAlignment="Top" FontSize="18" Height="23" Width="41"/>
+        <Border BorderBrush="White" BorderThickness="1" HorizontalAlignment="Left" Height="105" Margin="10,3,0,-61" VerticalAlignment="Top" Width="280" Grid.Row="1"/>
+        <Label Content="股票记录器 v1.00" Margin="10,10,177,10" Grid.Row="1"/>
+        <Label Content="项目github：" Margin="10,40,206,-19" Grid.Row="1"/>
+        <Label Content="https://github.com/supermagicgupiao/gupiao" Margin="10,70,10,-50" Grid.Row="1"/>
+    </Grid>
+</Window>

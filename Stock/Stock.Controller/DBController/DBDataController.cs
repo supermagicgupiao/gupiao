@@ -167,18 +167,27 @@ namespace Stock.Controller.DBController
         {
             DLE.deal = dealid;
             deallist.Insert(DLE);
-            DealList_Insert_StockHold(DLE);
+            StockHoldSet(DealList_Insert_StockHold(DLE));
             MoneyReadSet();
         }
         //批量增加交易记录
         public void DealListAdd(List<DealListEntity> DLEL)
         {
+            Dictionary<string, StockHoldEntity> dict = new Dictionary<string, StockHoldEntity>();
             foreach (DealListEntity DLE in DLEL)
             {
                 DealListEntity D = DLE;
                 D.deal = dealid;
                 deallist.Insert(D);
-                DealList_Insert_StockHold(D);
+                StockHoldEntity SHE = DealList_Insert_StockHold(D);
+                if (dict.ContainsKey(SHE.id))
+                    dict[SHE.id] = SHE;
+                else
+                    dict.Add(SHE.id, SHE);
+            }
+            foreach (var x in dict)
+            {
+                StockHoldSet(x.Value);
             }
             MoneyReadSet();
         }
@@ -215,8 +224,9 @@ namespace Stock.Controller.DBController
             }
             foreach (DealListEntity D in DLEL)
             {
-                DealList_Insert_StockHold(D);
+                SHE = DealList_Insert_StockHold(D);
             }
+            StockHoldSet(SHE);
             MoneyReadSet();
         }
         //读取全部持股构成
@@ -369,14 +379,23 @@ namespace Stock.Controller.DBController
         {
             List<DealListEntity> DLEL;
             DealListReadAll(out DLEL);
+            Dictionary<string, StockHoldEntity> dict = new Dictionary<string, StockHoldEntity>();
             foreach(DealListEntity DLE in DLEL)
             {
-                DealList_Insert_StockHold(DLE);
+                StockHoldEntity SHE = DealList_Insert_StockHold(DLE);
+                if (dict.ContainsKey(SHE.id))
+                    dict[SHE.id] = SHE;
+                else
+                    dict.Add(SHE.id, SHE);
+            }
+            foreach (var x in dict)
+            {
+                StockHoldSet(x.Value);
             }
             MoneyReadSet();
         }
         //按类型转换
-        private void DealList_Insert_StockHold(DealListEntity DLE)
+        private StockHoldEntity DealList_Insert_StockHold(DealListEntity DLE)
         {
             if (DLE.deal >= dealid)
                 dealid = DLE.deal + 1;
@@ -435,7 +454,8 @@ namespace Stock.Controller.DBController
             {
                 stockhold.Insert(SHE);
             }
-            StockHoldSet(SHE);
+            return SHE;
+            //StockHoldSet(SHE);
         }
     }
     public struct MoneyEntity

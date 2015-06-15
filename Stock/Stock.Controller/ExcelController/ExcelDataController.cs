@@ -6,6 +6,8 @@ using System.Text;
 using System.Data.OleDb;
 using System.Data;
 
+//using System.Threading;
+
 using Stock.Controller.DBController.DBTable;
 
 namespace Stock.Controller.ExcelController
@@ -14,6 +16,7 @@ namespace Stock.Controller.ExcelController
     {
         public OPENEXCEL_ERROR Open(string FilePath, out List<DealListEntity> DLEL)
         {
+            //Thread.Sleep(10000);
             DLEL = new List<DealListEntity>();
             String sConn;
             if (FilePath.Last() == 's')
@@ -31,7 +34,11 @@ namespace Stock.Controller.ExcelController
             {
                 using (OleDbConnection ole_conn = new OleDbConnection(sConn))
                 {
-                    ole_conn.Open();
+                    try { ole_conn.Open();}
+                    catch (Exception)
+                    {
+                        return OPENEXCEL_ERROR.OLE_ERROR;//XLSX没安装Microsoft.Ace.OleDb.12.0则会报错,XLS没安装Microsoft.Jet.OLEDB.4.0会报错
+                    }
                     using (OleDbCommand ole_cmd = ole_conn.CreateCommand())
                     {
                         System.Data.DataTable tableColumns = ole_conn.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Columns, new object[] { null, null, "Sheet1$", null });
@@ -51,7 +58,7 @@ namespace Stock.Controller.ExcelController
             }
             catch(OleDbException)
             {
-                return OPENEXCEL_ERROR.OLE_ERROR;//XLSX没安装Microsoft.Ace.OleDb.12.0则会报错,XLS没安装Microsoft.Jet.OLEDB.4.0会报错
+                return OPENEXCEL_ERROR.OLE_ERROR;
             }
             List<DealListEntity> DLELNoSort = new List<DealListEntity>();
             bool FORMAT = true;

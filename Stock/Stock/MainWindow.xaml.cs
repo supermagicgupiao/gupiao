@@ -40,6 +40,41 @@ namespace Stock
         public static double price = 0;
         public static double upwin = 0;
         public static double daywin = 0;
+
+        private static System.Windows.Forms.NotifyIcon notifyIcon = new System.Windows.Forms.NotifyIcon();
+        private static void ShowAbout(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.Show();
+        }
+        public static void ShowNotifyMessage(string str)
+        {
+            notifyIcon.ShowBalloonTip(1000, "提示", str, System.Windows.Forms.ToolTipIcon.Info);
+        }
+        private static void MaxMinMessage(object sender, EventArgs e)
+        {
+            if ((e as System.Windows.Forms.MouseEventArgs).Button != System.Windows.Forms.MouseButtons.Left)
+                return;
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window.Title == "MainWindow")
+                {
+                    if (window.WindowState == WindowState.Minimized)
+                    {
+                        window.WindowState = WindowState.Normal;
+                        break;
+                    }
+                    if(window.IsVisible)
+                        window.Hide();
+                    else
+                        window.Show();
+                    break;
+                }
+            }
+        }
+
+
+
         private void MainGrid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -101,15 +136,50 @@ namespace Stock
             if (openFileDialog.ShowDialog() == true)
             {
                 ExcelDataController edc = new ExcelDataController();
-                List<DealListEntity> DLEL;
-                edc.Open(openFileDialog.FileName, out DLEL);
-                DBSyncController.Handler().DealListAdd(DLEL);
-                StockStateBoxController.Handler().StockBoxInit();
+                OpenDelegate od = new OpenDelegate(OpenExcel);
+                loading.Visibility = Visibility.Visible;
+                IAsyncResult asyncResult = od.BeginInvoke(openFileDialog.FileName, OpenExcelCompleted, od);
+                //List<DealListEntity> DLEL = od.EndInvoke(asyncResult);
+                //loading.Visibility = Visibility.Collapsed;
+                //DBSyncController.Handler().DealListAdd(DLEL);
+                //DBDataThreadController.DBDataThreadControllerHandler(DBSyncController.Handler()).DealListAdd(DLEL);
+                //StockStateBoxController.Handler().StockBoxInit();
             }
             else
             {
                 return;
             }
+        }
+        private delegate List<DealListEntity> OpenDelegate(string str);
+        private List<DealListEntity> OpenExcel(string str)
+        {
+            ExcelDataController edc = new ExcelDataController();
+            List<DealListEntity> DLEL;
+            Adapter.ErrorAdapter.Show(edc.Open(str, out DLEL));
+            return DLEL;
+        }
+        private delegate void InsertDBDelegate(List<DealListEntity> DLEL);
+        private void InsertDB(List<DealListEntity> DLEL)
+        {
+            DBSyncController.Handler().DealListAdd(DLEL);
+            Action<Loading> updateAction = new Action<Loading>(LoadingClose);
+            loading.Dispatcher.BeginInvoke(updateAction, loading);
+            ShowNotifyMessage("成功读取" + DLEL.Count.ToString() + "条记录");
+        }
+        private void OpenExcelCompleted(IAsyncResult asyncResult)
+        {
+            if (asyncResult == null) return;
+            //Action<Loading> updateAction = new Action<Loading>(LoadingClose);
+            //loading.Dispatcher.BeginInvoke(updateAction, loading);
+            List<DealListEntity> DLEL = (asyncResult.AsyncState as OpenDelegate).EndInvoke(asyncResult);
+            InsertDBDelegate i = new InsertDBDelegate(InsertDB);
+            i.Invoke(DLEL);
+            //ShowNotifyMessage("成功读取" + DLEL.Count.ToString() + "条记录");
+            //DBDataThreadController.DBDataThreadControllerHandler(DBSyncController.Handler()).DealListAdd(DLEL);
+        }
+        private void LoadingClose(Loading loading)
+        {
+            loading.Visibility = Visibility.Collapsed;
         }
 
         private void DealList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -137,7 +207,23 @@ namespace Stock
             infoshow = new InfoShow();
             UserCanvas.Visibility = Visibility.Hidden;
             total.IsEnabled = false;
+            total.Text = "0";
             now.IsEnabled = false;
+            now.Text = "0";
+
+            //托盘
+            notifyIcon.Click += MaxMinMessage;
+            notifyIcon.Text = "股票记录器";
+            notifyIcon.Icon = Properties.Resources.Icon;
+            System.Windows.Forms.ContextMenuStrip cs = new System.Windows.Forms.ContextMenuStrip();
+            System.Windows.Forms.ToolStripMenuItem tsm = new System.Windows.Forms.ToolStripMenuItem();
+            tsm.Text = "关于";
+            tsm.Click += ShowAbout;
+            cs.Items.Add(tsm);
+            notifyIcon.ContextMenuStrip = cs;
+            notifyIcon.Visible = true;
+
+            ShowNotifyMessage("程序初始化中!");
 
             //程序开始准备
             this.Hide();
@@ -205,10 +291,19 @@ namespace Stock
 
         private void GetDelegateValues(MoneyEntity ME)
         {
-            setUser(ME.name);
-            setPrincipal(ME.principal);
-            setTotal(ME.now + win);
-            setNow(ME.now);
+            Action<MainWindow, MoneyEntity> updateAction = new Action<MainWindow, MoneyEntity>(UpdateData);
+            this.Dispatcher.BeginInvoke(updateAction, this, ME);
+            //setUser(ME.name);
+            //setPrincipal(ME.principal);
+            //setTotal(ME.now + win);
+            //setNow(ME.now);
+        }
+        public void UpdateData(MainWindow main, MoneyEntity ME)
+        {
+            main.setUser(ME.name);
+            main.setPrincipal(ME.principal);
+            main.setTotal(ME.now + win);
+            main.setNow(ME.now);
         }
 
         //private void StockBox()
@@ -373,10 +468,10 @@ namespace Stock
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                MessageBox.Show(NetDataController.GetLog());
-            }
+            //if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            //{
+            //    MessageBox.Show(NetDataController.GetLog());
+            //}
             if (e.Key == Key.F1)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -392,6 +487,7 @@ namespace Stock
                     brush.ImageSource = cb;
                     //brush.Opacity = 0.95;
                     MainGrid.Background = brush;
+                    ShowNotifyMessage("成功更换皮肤!");
                 }
                 else
                 {

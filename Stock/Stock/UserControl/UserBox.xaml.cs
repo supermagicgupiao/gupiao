@@ -93,13 +93,17 @@ namespace Stock
             }
             this.pri.Content = "本金:" + im.m;
             UserPanelController.Handler().DBControllerByName(u).PrincipalChange(im.m - pri);
+            MainWindow.ShowNotifyMessage("成功修改本金\n账户名:" + u + "本金:" + im.m);
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult res = MessageBox.Show("是否删除账户:" + name.Content.ToString(), "删除账户", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
             if (res == MessageBoxResult.Yes)
+            {
                 UserPanelController.Handler().DelUser(name.Content.ToString());
+                MainWindow.ShowNotifyMessage("成功删除用户\n账户名:" + name.Content.ToString());
+            }
         }
 
     }

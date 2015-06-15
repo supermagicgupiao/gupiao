@@ -141,7 +141,10 @@ namespace Stock.UIController
                 }
                 name = dlg.n;
                 if (usersController.GetUserControler(name) == null)
+                {
                     UserPanelController.Handler().AddUser(dlg.n, dlg.m);
+                    MainWindow.ShowNotifyMessage("成功添加新账户\n账户名:" + dlg.n + "本金:" + dlg.m);
+                }
                 else
                 {
                     MessageBox.Show("账户名已存在");

@@ -119,6 +119,15 @@ namespace Stock.UIController
         //}
         public void GetDelegateValues(StockHoldEntity SHE)
         {
+            Action<Canvas, StockHoldEntity> updateAction = new Action<Canvas, StockHoldEntity>(UpdateCanvas);
+            canvas.Dispatcher.BeginInvoke(updateAction, canvas, SHE);
+            //if (!Change(SHE.id, SHE.hold, SHE.money))
+            //{
+            //    Add(SHE.id, SHE.name, SHE.hold, SHE.money);
+            //}
+        }
+        public void UpdateCanvas(Canvas canvas, StockHoldEntity SHE)
+        {
             if (!Change(SHE.id, SHE.hold, SHE.money))
             {
                 Add(SHE.id, SHE.name, SHE.hold, SHE.money);

@@ -54,6 +54,7 @@
     <Compile Include="DBController\DBConnection\FileConnection.cs" />
     <Compile Include="DBController\DBConnection\MemConnection.cs" />
     <Compile Include="DBController\DBDataController.cs" />
+    <Compile Include="DBController\DBDataThreadController.cs" />
     <Compile Include="DBController\DBDelegateBridge.cs" />
     <Compile Include="DBController\DBError.cs" />
     <Compile Include="DBController\DBTable\DealLists.cs" />

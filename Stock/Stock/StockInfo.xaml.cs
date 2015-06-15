@@ -86,6 +86,7 @@ namespace Stock
             if (stockList.Contains(StockID))
             {
                 MessageBox.Show("已经打开了一个股票编号为:" + StockID + "的窗口\n请勿重复开启");
+                stockList.Add(StockID);
                 this.Close();
                 return;
             }
